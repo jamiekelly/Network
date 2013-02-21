@@ -202,16 +202,19 @@ public class Client extends JComponent
 						JOptionPane.showMessageDialog(null, "Server Disconnected", "Info", JOptionPane.INFORMATION_MESSAGE);
 						System.exit(0);
 					}
-					
-					ois = new ObjectInputStream(socket.getInputStream());
-					list_data.add(list_data.size() + 1,(DataPackage) ois.readObject());
-					
-					for (int i = 0; i < list_data.size(); i++)
+					try{
+						updateArray();
+						ois = new ObjectInputStream(socket.getInputStream());
+						list_data = (ArrayList<DataPackage>) ois.readObject();
+					}catch(Exception ex){
+						System.out.println("Haywire");
+					}
+					for (int i = 0; i< list_data.size(); i++)
 					{
 						DataPackage dp = list_data.get(i);
-						
 						if (list_data.size() != others.size())
 						{
+							System.out.println("IF");
 							if (list_data.size() > others.size())
 							{
 								others.add(dp);
@@ -225,6 +228,7 @@ public class Client extends JComponent
 						}
 						else
 						{
+							System.out.println("ELSE");
 							others.set(i, dp);
 						}
 					}

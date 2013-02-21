@@ -173,7 +173,7 @@ public class Server
 						
 						ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
 						DataPackage dp = (DataPackage) ois.readObject();
-					
+						
 						list_data.set(i, dp);
 						if (receive_state == 1) // Client Disconnected by User
 						{
