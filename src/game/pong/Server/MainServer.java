@@ -62,8 +62,9 @@ public class MainServer
 	public static ArrayList<DataPackage> list_data = new ArrayList<DataPackage>();
 	private static Runnable onUpdate = new Runnable(){
 		public void run() {
-			while(isGameReady){
+			while(true){
 				if(isGameReady){
+					System.out.println("Working, kind of?");
 					ball.x += ball.dX;
 					ball.y += ball.dY;
 					int x = ball.x + 10;
@@ -114,9 +115,6 @@ public class MainServer
 		@Override
 		public void run()
 		{
-
-			new Thread(onUpdate).start();
-			
 			while (true)
 			{
 				//Notifying console the amount of people connected currently
@@ -148,6 +146,7 @@ public class MainServer
 						ball.x = Display.getWidth() / 2 - 10;
 						ball.y = Display.getHeight() / 2 - 10;
 						
+						new Thread(onUpdate).start();
 						new Thread(send).start();
 						new Thread(receive).start();
 					}
@@ -200,6 +199,9 @@ public class MainServer
 					*/
 					for(int i = 0; i < list_players.size(); i++){
 						try{
+							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
+							oos.writeObject(ball);
+							
 							//Send player data to each other
 							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
 							Player p = list_players.get(i);
@@ -210,9 +212,6 @@ public class MainServer
 								num = 0;
 							}
 							oos.writeObject(list_players.get(num));
-							
-							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
-							
 							
 							
 							Thread.sleep(20);

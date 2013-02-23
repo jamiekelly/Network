@@ -210,6 +210,13 @@ public class MainClient {
 				glVertex2i(Display.getWidth() - 20, p2Y + 60); //4
 			glEnd();
 			
+			//Ball
+			glBegin(GL_QUADS);//Bally thingy
+				glVertex2i(ballx, bally); //1
+				glVertex2i(ballx + 20, bally); //2
+				glVertex2i(ballx + 20, bally + 20); //3
+				glVertex2i(ballx, bally + 20); //4
+			glEnd();
 			Display.sync(60);
 			Display.update();
 			
@@ -229,6 +236,13 @@ public class MainClient {
 			{
 				try
 				{
+					//Receiving the ball class
+					ois = new ObjectInputStream(socket.getInputStream());
+					Ball b = (Ball) ois.readObject();
+					
+					ballx = b.x;
+					bally = b.y;
+					
 					ois = new ObjectInputStream(socket.getInputStream());
 					Player p = (Player) ois.readObject();	
 					
