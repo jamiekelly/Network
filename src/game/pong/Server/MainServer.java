@@ -39,7 +39,7 @@ import org.omg.CORBA.OMGVMCID;
  * 
  */
 
-public class Main
+public class MainServer
 {
 	public static int port = 7777;
 	public static String ip = "";
@@ -71,7 +71,7 @@ public class Main
 	public static ArrayList<DataPackage> list_data = new ArrayList<DataPackage>();
 	private static Runnable onUpdate = new Runnable(){
 		public void run() {
-			while(true){
+			while(isGameReady){
 				if(isGameReady){
 					ball.x += ball.dX;
 					ball.y += ball.dY;
@@ -207,6 +207,7 @@ public class Main
 				
 				
 				if(isGameReady){
+					System.out.println("Yeah, game is ready");
 					/*
 					* First the server is going to 
 					*/

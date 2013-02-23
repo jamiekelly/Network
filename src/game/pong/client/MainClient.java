@@ -1,5 +1,13 @@
 package game.pong.client;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import javax.swing.JOptionPane;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -27,12 +35,22 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
-public class Main {
+public class MainClient {
 	
 	
 	static boolean applet = false;
 	
 	static int playerNum = 0;
+	
+	static int score0 = 0;
+	static int score1 = 0;
+	static int score(int num){
+		if(num == 0){
+			return score0;
+		}else{
+			return score1;
+		}
+	}
 	
 	static int x = 0;
 	static int y;
@@ -42,8 +60,12 @@ public class Main {
 	static int ballx;
 	static int bally;	
 	
+	//TODO In applet, load parameters from here
+	static int port = 7777;
+	static String ip = "82.71.22.183";
+	public static Socket socket;
 	
-	public Main()
+	public MainClient()
 	{
 		if(!applet)
 		{
@@ -79,6 +101,33 @@ public class Main {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 		
+		String local;
+		
+		try
+		{
+			local = InetAddress.getLocalHost().getHostAddress() + ":" + port;
+		}
+		catch (UnknownHostException ex)
+		{
+			local = "Network Error";
+		}
+		
+		ip = (String) JOptionPane.showInputDialog(null, "IP: ", "Info", JOptionPane.INFORMATION_MESSAGE, null, null, local);
+		
+		port = Integer.parseInt(ip.substring(ip.indexOf(":") + 1));
+		ip = ip.substring(0, ip.indexOf(":"));
+		
+		try {
+			socket = new Socket(ip, port);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ObjectOutputStream oos;
 		while(!Display.isCloseRequested())
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -100,27 +149,23 @@ public class Main {
 					//TODO Update server about location
 				}
 			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_W)) //Right side paddle, player 1
-			{
-				if(p2Y > 0)
-				{
-					p2Y -= 5;
-					//TODO Update server about location
-				}
+			Player p = new Player();
+			p.x = x;
+			p.y = y;
+			p.score = score(playerNum);
+			try {
+				oos = new ObjectOutputStream(socket.getOutputStream());
+				oos.writeObject(p);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_S))
-			{
-				if(p2Y + 60 < Display.getHeight())
-				{
-					p2Y += 5;
-					//TODO Update server about location
-				}
-			}
+			
 			
 			/*Text at the top of the screen*/
 			Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 1);
-			Font.drawString(score0, (Display.getWidth()*.25)-40, 20, 1);
-			Font.drawString(score1, (Display.getWidth()*.75)-40, 20, 1);
+			Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 1);
+			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1);
 			
 			/* */
 			
@@ -154,6 +199,6 @@ public class Main {
 	
 	public static void main(String []args)
 	{
-		new Main();
+		new MainClient();
 	}
 }
