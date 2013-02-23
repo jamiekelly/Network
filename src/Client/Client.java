@@ -42,7 +42,6 @@ public class Client extends JComponent
 	}
 	
 	
-	
 	public Client()
 	{
 		this.addMouseMotionListener(new MouseMotionListener()
@@ -57,7 +56,6 @@ public class Client extends JComponent
 			@Override
 			public void mouseMoved(MouseEvent arg0) {}
 		});
-		
 		
 		
 		try
@@ -107,7 +105,6 @@ public class Client extends JComponent
 			System.exit(0);
 		}
 	}
-	
 	
 	
 	public int state = 0;
