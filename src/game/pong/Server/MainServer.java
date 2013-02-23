@@ -14,7 +14,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import javax.jws.Oneway;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -27,10 +26,8 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.lwjgl.opengl.Display;
-import org.omg.CORBA.OMGVMCID;
 
 
 public class MainServer
@@ -141,12 +138,16 @@ public class MainServer
 						System.out.println("one player!");
 						//Adds first player to array
 					}
-					else if(numPeopleConnected == 2)
+					else if(numPeopleConnected == 2) //TODO Shouldn't this either be set to "== 1" or change initial val of numPeopleConnected = 0?
 					{
 						System.out.println("two player!");
 						isGameReady = true;
 						//Adds second player to array
 						//Start the send + receive threads! :D
+						
+						ball.x = Display.getWidth() / 2 - 10;
+						ball.y = Display.getHeight() / 2 - 10;
+						
 						new Thread(send).start();
 						new Thread(receive).start();
 					}
@@ -163,27 +164,23 @@ public class MainServer
 		{
 			for(int i = 0; i < list_sockets.size(); i++)
 			{
-				//TODO?
 			}
 		}
 		synchronized(list_client_states){
 			for(int i = 0; i < list_client_states.size(); i++)
 			{
-				//TODO?
 			}
 		}
 		synchronized(list_data)
 		{
 			for(int i = 0; i < list_data.size(); i++)
 			{
-				//TODO?
 			}
 		}
 		synchronized(list_players)
 		{
 			for(int i = 0; i < list_data.size(); i++)
 			{
-				//TODO?
 			}
 		}
 	}
@@ -203,6 +200,7 @@ public class MainServer
 					*/
 					for(int i = 0; i < list_players.size(); i++){
 						try{
+							//Send player data to each other
 							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
 							Player p = list_players.get(i);
 							int num = 0;;
@@ -212,6 +210,11 @@ public class MainServer
 								num = 0;
 							}
 							oos.writeObject(list_players.get(num));
+							
+							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
+							
+							
+							
 							Thread.sleep(20);
 						}catch(Exception ex){
 							ex.printStackTrace();
