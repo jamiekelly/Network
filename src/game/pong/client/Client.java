@@ -27,7 +27,7 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
-public class Main {
+public class Client {
 	
 	
 	static boolean applet = false;
@@ -38,7 +38,7 @@ public class Main {
 	static int p2Y = 0;
 	
 	
-	public Main(){
+	public Client(){
 		if(!applet){
 			try{
 			
@@ -114,6 +114,6 @@ public class Main {
 	}
 	
 	public static void main(String []args){
-		new Main();
+		new Client();
 	}
 }

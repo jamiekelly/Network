@@ -1,4 +1,4 @@
-package game.pong.Server;
+package Server;
 
 import java.io.Serializable;
 
