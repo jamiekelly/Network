@@ -32,12 +32,6 @@ import javax.swing.text.html.HTMLDocument.Iterator;
 import org.lwjgl.opengl.Display;
 import org.omg.CORBA.OMGVMCID;
 
-/**
- * 
- * @author Vallentin <vallentinsource@gmail.com>
- * @since April 8, 2012
- * 
- */
 
 public class MainServer
 {
@@ -97,6 +91,7 @@ public class MainServer
 						//Resets the location of the ball :p
 						x = Display.getWidth() / 2;
 						y = Display.getHeight() / 2;
+						//TODO Set a wait time for reset?
 					}
 					if(x < 0){
 						//The Right side player scores
@@ -104,6 +99,7 @@ public class MainServer
 						//Resets the location of the ball :p
 						x = Display.getWidth() / 2;
 						y = Display.getHeight() / 2;
+						//TODO Set a wait time for reset?
 					}
 				}
 			}
@@ -121,7 +117,7 @@ public class MainServer
 			{
 				//Notifying console the amount of people connected currently
 				numPeopleConnected++;
-				System.out.println(numPeopleConnected);
+				System.out.println(numPeopleConnected); //TODO stop more than two clients from connecting to server?
 				try{
 					//Server accepts the user and is made a socket connection
 					Socket socket = server.accept();
@@ -131,10 +127,13 @@ public class MainServer
 					list_sockets.add(socket);
 					
 					ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-					if(numPeopleConnected == 1){
+					if(numPeopleConnected == 1)
+					{
 						oos.writeObject("Waiting for second player; when connected game will start!");
 						//Adds first player to array
-					}else if(numPeopleConnected == 2){
+					}
+					else if(numPeopleConnected == 2) //TODO Shouldn't this either be set to "== 1" or change initial val of numPeopleConnected = 0?
+					{
 						isGameReady = true;
 						//Adds second player to array
 						//Start the send + receive threads! :D
@@ -147,25 +146,33 @@ public class MainServer
 		}
 	};
 	
-	public static void updateArray(){
-		synchronized(list_sockets){
-			for(int i = 0; i < list_sockets.size(); i++){
-				
+	public static void updateArray()
+	{
+		synchronized(list_sockets)
+		{
+			for(int i = 0; i < list_sockets.size(); i++)
+			{
+				//TODO?
 			}
 		}
 		synchronized(list_client_states){
-			for(int i = 0; i < list_client_states.size(); i++){
-				
+			for(int i = 0; i < list_client_states.size(); i++)
+			{
+				//TODO?
 			}
 		}
-		synchronized(list_data){
-			for(int i = 0; i < list_data.size(); i++){
-				
+		synchronized(list_data)
+		{
+			for(int i = 0; i < list_data.size(); i++)
+			{
+				//TODO?
 			}
 		}
-		synchronized(list_players){
-			for(int i = 0; i < list_data.size(); i++){
-				
+		synchronized(list_players)
+		{
+			for(int i = 0; i < list_data.size(); i++)
+			{
+				//TODO?
 			}
 		}
 	}

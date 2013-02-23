@@ -39,8 +39,13 @@ import static org.lwjgl.opengl.GL11.glVertex2i;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MainClient {
-	
-	
+	/*
+	//TODO we need to make sure the second player get's IDed as player 1
+	 * after that we need to make sure the second player controls ONLY the left paddle
+	 * I just want to raise these concerns if you haven't already thought about them
+	 * 
+	 * We should concentrate on making the server serve the ball once two clients have joined.
+	 * */
 	static boolean applet = false;
 	
 	static int playerNum = 0;
@@ -61,7 +66,7 @@ public class MainClient {
 	static int p2Y;
 	
 	static int ballx;
-	static int bally;	
+	static int bally;
 	
 	//TODO In applet, load parameters from here
 	static int port = 7777;
@@ -134,7 +139,7 @@ public class MainClient {
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			/* Controls */
-			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Left side paddle, player 0
+			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddle
 			{
 				if(y > 0)
 				{
@@ -144,15 +149,12 @@ public class MainClient {
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
 			{
-				if(y + 60 < Display.getHeight()){
-				
+				if(y + 60 < Display.getHeight())
+				{
 					y += 5;
 					//TODO Update server about location
 				}
 			}
-			
-			
-			
 			
 			
 			/*Text at the top of the screen*/
@@ -160,7 +162,7 @@ public class MainClient {
 			Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 1);
 			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1);
 			
-			/* */
+			/* <addition space> */
 			
 			
 			
@@ -171,14 +173,14 @@ public class MainClient {
 			 * .       .
 			 * 4.......3
 			 */
-			glBegin(GL_QUADS);
+			glBegin(GL_QUADS);  // Player 0 paddle, Right paddle
 				glVertex2i(x , y);	//1
 				glVertex2i(x + 20 , y);	//2
 				glVertex2i(x + 20, y + 60);	//3
 				glVertex2i(x , y + 60);	//4
 			glEnd();
 			
-			glBegin(GL_QUADS);
+			glBegin(GL_QUADS);  // Player 1 paddle, Left paddle
 				glVertex2i(Display.getWidth() - 20, p2Y); //1
 				glVertex2i(Display.getWidth(), p2Y); //2
 				glVertex2i(Display.getWidth(), p2Y + 60); //3
@@ -188,7 +190,7 @@ public class MainClient {
 			Display.sync(60);
 			Display.update();
 			
-	}
+		}
 	}
 	
 	public static void main(String []args)
