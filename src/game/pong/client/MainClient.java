@@ -50,6 +50,7 @@ public class MainClient {
 	 * */
 	static boolean applet = false;
 	
+	static int isGameReady = 0;
 	static int playerNum = 0;
 	
 	static int score0 = 0;
@@ -150,9 +151,10 @@ public class MainClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+			new Thread(receive).start();
+			new Thread(send).start();
 		while(!Display.isCloseRequested())
 		{
-			send();
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			/* Controls */
@@ -222,31 +224,60 @@ public class MainClient {
 	{
 		new MainClient();
 	}
-	
-	public static void send(){
+	private static Runnable receive = new Runnable(){
+		public void run(){
+		ObjectInputStream ois;
+		while(true){
+			try{
+				ois = new ObjectInputStream(socket.getInputStream());
+				Player p = (Player) ois.readObject();
+				
+				if(p.playerNum == 1 && playerNum == 0){
+					p2X = p.x;
+					p2Y = p.y;
+					score1 = p.score;
+					System.out.println("Y: " + p.y + " ID: " + p.playerNum);
+				}
+				if(p.playerNum == 0 && playerNum == 1){
+					x = p.x;
+					y = p.y;
+					score0 = p.score;
+					System.out.println("22222 Y: " + p.y + " ID: " + p.playerNum);
+				}
+				Thread.sleep(100);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		}
+	};
+	private static Runnable send = new Runnable(){
+		public void run(){
 		//Get the previous location of x
 		ObjectOutputStream oos;
+		while(true){
 					try
 					{
-						Player dp = new Player();
+						
 						
 						if(playerNum == 0){
-							if(lY != y){
-								
-								dp.x = x;
-								dp.y = y;
-								System.out.println("Sending 0");
+							if(1 == 1){
+								Player p = new Player();
+								p.x = x;
+								p.y = y;
+								p.playerNum = playerNum;
 								oos = new ObjectOutputStream(socket.getOutputStream());
-								oos.writeObject(dp);
+								oos.writeObject(p);
 							}
-						}else{
-							if(l2Y != p2Y){
-							
-								dp.x = p2X;
-								dp.y = p2Y;
-								System.out.println("Sending 1");
+						}else if(playerNum == 1){
+							if(1 == 1){
+								Player p1 = new Player();
+								p1.x = p2X;
+								p1.y = p2Y;
+								p1.playerNum = playerNum;
+								
 								oos = new ObjectOutputStream(socket.getOutputStream());
-								oos.writeObject(dp);
+								oos.writeObject(p1);
 							}
 						}
 						
@@ -254,8 +285,9 @@ public class MainClient {
 						
 						lY = y;
 						l2Y = p2Y;
+						Thread.sleep(100);
 					}catch(Exception e){}
-			
-		
-	}
+			}
+		}
+	};
 }

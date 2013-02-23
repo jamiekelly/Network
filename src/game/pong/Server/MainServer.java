@@ -131,6 +131,7 @@ public class MainServer
 					
 					list_clients_model.addElement(numPeopleConnected + " - " + socket.getInetAddress().getHostAddress() + " - " + socket.getInetAddress().getHostName());
 					list_client_states.add(0);
+					list_players.add(new Player());
 					list_sockets.add(socket);
 					
 					ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
@@ -149,6 +150,7 @@ public class MainServer
 						new Thread(send).start();
 						new Thread(receive).start();
 					}
+					Thread.sleep(20);
 				}
 				catch (Exception ex) {}
 			}
@@ -199,11 +201,21 @@ public class MainServer
 					/*
 					* First the server is going to 
 					*/
-					for(int i = 0; i < 2; i++){
+					for(int i = 0; i < list_players.size(); i++){
 						try{
 							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
-							oos.writeObject(list_players.get(i));
-						}catch(Exception ex){}
+							Player p = list_players.get(i);
+							int num = 0;;
+							if(i == 0){
+								num = 1;
+							}else if(i == 1){
+								num = 0;
+							}
+							oos.writeObject(list_players.get(num));
+							Thread.sleep(20);
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}
 					}
 				}
 			}
@@ -226,11 +238,12 @@ public class MainServer
 					/*
 					* First the server is going to 
 					*/
-					for(int i = 0; i < 2; i++){
+					for(int i = 0; i < list_players.size(); i++){
 						try{
 							ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
 							Player p = (Player) ois.readObject();
 							list_players.set(i, p);
+							Thread.sleep(20);
 						}catch(Exception ex){}
 					}
 				}
