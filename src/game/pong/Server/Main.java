@@ -28,8 +28,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.html.HTMLDocument.Iterator;
 
-import Server.DataPackage;
-
 /**
  * 
  * @author Vallentin <vallentinsource@gmail.com>
@@ -37,7 +35,7 @@ import Server.DataPackage;
  * 
  */
 
-public class Server
+public class Main
 {
 	public static int port = 7777;
 	public static String ip = "";
