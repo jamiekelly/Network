@@ -207,12 +207,12 @@ public class MainServer
 				
 				
 				if(isGameReady){
-					System.out.println("Yeah, game is ready");
 					/*
 					* First the server is going to 
 					*/
 					for(int i = 0; i < 2; i++){
 						try{
+							System.out.println("Reading");
 							ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
 							Player p = (Player) ois.readObject();
 							list_players.set(i, p);

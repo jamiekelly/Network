@@ -1,13 +1,5 @@
 package game.pong.client;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-import javax.swing.JOptionPane;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -63,7 +55,6 @@ public class MainClient {
 	//TODO In applet, load parameters from here
 	static int port = 7777;
 	static String ip = "82.71.22.183";
-	public static Socket socket;
 	
 	public MainClient()
 	{
@@ -99,35 +90,6 @@ public class MainClient {
 		glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		
-		String local;
-		
-		try
-		{
-			local = InetAddress.getLocalHost().getHostAddress() + ":" + port;
-		}
-		catch (UnknownHostException ex)
-		{
-			local = "Network Error";
-		}
-		
-		ip = (String) JOptionPane.showInputDialog(null, "IP: ", "Info", JOptionPane.INFORMATION_MESSAGE, null, null, local);
-		
-		port = Integer.parseInt(ip.substring(ip.indexOf(":") + 1));
-		ip = ip.substring(0, ip.indexOf(":"));
-		
-		try {
-			socket = new Socket(ip, port);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		ObjectOutputStream oos;
 		while(!Display.isCloseRequested())
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -137,37 +99,27 @@ public class MainClient {
 			{
 				if(y > 0)
 				{
-					y -= 5;
+						y -= 5;
 					//TODO Update server about location
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
 			{
-				if(y + 60 < Display.getHeight())
-				{
+				if(y + 60 < Display.getHeight()){
+				
 					y += 5;
-					//TODO Update server about location
+				}
 				}
 			}
-			Player p = new Player();
-			p.x = x;
-			p.y = y;
-			p.score = score(playerNum);
-			try {
-				oos = new ObjectOutputStream(socket.getOutputStream());
-				oos.writeObject(p);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			
+			
 			
 			
 			/*Text at the top of the screen*/
 			Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 1);
 			Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 1);
 			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1);
-			
-			/* */
 			
 			
 			
@@ -194,11 +146,13 @@ public class MainClient {
 			
 			Display.sync(60);
 			Display.update();
-		}
+			
 	}
 	
 	public static void main(String []args)
 	{
 		new MainClient();
 	}
+	
+	
 }
