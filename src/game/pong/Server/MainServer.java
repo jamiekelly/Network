@@ -141,7 +141,7 @@ public class MainServer
 						System.out.println("one player!");
 						//Adds first player to array
 					}
-					else if(numPeopleConnected == 2) //TODO Shouldn't this either be set to "== 1" or change initial val of numPeopleConnected = 0?
+					else if(numPeopleConnected == 2)
 					{
 						System.out.println("two player!");
 						isGameReady = true;

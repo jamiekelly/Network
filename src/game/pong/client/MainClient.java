@@ -16,8 +16,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import Client.DataPackage;
-
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
@@ -45,12 +43,10 @@ public class MainClient {
 	//TODO we need to make sure the second player get's IDed as player 1
 	 * after that we need to make sure the second player controls ONLY the left paddle
 	 * I just want to raise these concerns if you haven't already thought about them
-	 * 
 	 * We should concentrate on making the server serve the ball once two clients have joined.
 	 * */
 	static boolean applet = false;
 	
-	static int isGameReady = 0;
 	static int playerNum = 0;
 	
 	static int score0 = 0;
@@ -224,26 +220,32 @@ public class MainClient {
 	{
 		new MainClient();
 	}
-	private static Runnable receive = new Runnable(){
-		public void run(){
-		ObjectInputStream ois;
-		while(true){
-			try{
-				ois = new ObjectInputStream(socket.getInputStream());
-				Player p = (Player) ois.readObject();
-				
-				if(p.playerNum == 1 && playerNum == 0){
-					p2X = p.x;
-					p2Y = p.y;
-					score1 = p.score;
-					System.out.println("Y: " + p.y + " ID: " + p.playerNum);
-				}
-				if(p.playerNum == 0 && playerNum == 1){
-					x = p.x;
-					y = p.y;
-					score0 = p.score;
-					System.out.println("22222 Y: " + p.y + " ID: " + p.playerNum);
-				}
+	private static Runnable receive = new Runnable()
+	{
+		public void run()
+		{
+			ObjectInputStream ois;
+			while(true)
+			{
+				try
+				{
+					ois = new ObjectInputStream(socket.getInputStream());
+					Player p = (Player) ois.readObject();	
+					
+					if(p.playerNum == 1 && playerNum == 0)
+					{
+						p2X = p.x;
+						p2Y = p.y;
+						score1 = p.score;
+						System.out.println("Y: " + p.y + " ID: " + p.playerNum);
+					}
+					if(p.playerNum == 0 && playerNum == 1)
+					{
+						x = p.x;
+						y = p.y;
+						score0 = p.score;
+						System.out.println("22222 Y: " + p.y + " ID: " + p.playerNum);
+					}
 				Thread.sleep(10);
 			}catch(Exception e){
 				e.printStackTrace();
@@ -251,17 +253,20 @@ public class MainClient {
 		}
 		}
 	};
-	private static Runnable send = new Runnable(){
-		public void run(){
+	private static Runnable send = new Runnable()
+	{
+		public void run()
+		{
 		//Get the previous location of x
 		ObjectOutputStream oos;
 		while(true){
 					try
 					{
 						
-						
-						if(playerNum == 0){
-							if(1 == 1){
+						if(playerNum == 0)
+						{
+							if(true)
+							{
 								Player p = new Player();
 								p.x = x;
 								p.y = y;
@@ -269,8 +274,11 @@ public class MainClient {
 								oos = new ObjectOutputStream(socket.getOutputStream());
 								oos.writeObject(p);
 							}
-						}else if(playerNum == 1){
-							if(1 == 1){
+						}
+						else if(playerNum == 1)
+						{
+							if(true)
+							{
 								Player p1 = new Player();
 								p1.x = p2X;
 								p1.y = p2Y;
@@ -280,8 +288,6 @@ public class MainClient {
 								oos.writeObject(p1);
 							}
 						}
-						
-						
 						
 						lY = y;
 						l2Y = p2Y;
