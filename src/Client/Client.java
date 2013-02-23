@@ -17,7 +17,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import Server.DataPackage;
 
 /**
  * 
@@ -242,7 +241,7 @@ public class Client extends JComponent
 	
 	public static Socket socket;
 	
-	public static int port = 2406;
+	public static int port = 7777;
 	public static String ip = "";
 	
 	

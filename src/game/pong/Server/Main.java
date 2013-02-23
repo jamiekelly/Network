@@ -1,4 +1,4 @@
-package Server;
+package game.pong.Server;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -35,7 +35,7 @@ import javax.swing.text.html.HTMLDocument.Iterator;
  * 
  */
 
-public class Server
+public class Main
 {
 	public static int port = 7777;
 	public static String ip = "";
