@@ -14,6 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import javax.jws.Oneway;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,6 +29,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.html.HTMLDocument.Iterator;
 
+import org.lwjgl.opengl.Display;
+import org.omg.CORBA.OMGVMCID;
+
 /**
  * 
  * @author Vallentin <vallentinsource@gmail.com>
@@ -40,65 +44,109 @@ public class Main
 	public static int port = 7777;
 	public static String ip = "";
 	
+	//When game will be ready then both players will be brought
+	//in game and the ball will appear and players will be able to
+	//move their paddles and rebound the ball :p
+	public static boolean isGameReady = false;
+	//It's set to -1 because the code is run once started, and every
+	//time someone connects to the server; so to make it 0 when the first
+	//player joins, it should be set to -1 :p
+	public static int numPeopleConnected = -1;
 	public static ServerSocket server;
+	
+	//Server side location of player one!
+	public static int p1X = 0;
+	public static int p1Y = 0;
+	//Server side location of player two!
+	public static int p2X = 0;
+	public static int p2Y = 0;
+	
+	public static Ball ball = new Ball();
+	//ArrayList that holds the players, the data won't be sent if the player
+	//is the same as the data being sent
+	public static ArrayList<Player> list_players = new ArrayList<Player>();
 	
 	public static ArrayList<Socket> list_sockets = new ArrayList<Socket>();
 	public static ArrayList<Integer> list_client_states = new ArrayList<Integer>();
 	public static ArrayList<DataPackage> list_data = new ArrayList<DataPackage>();
-	
+	private static Runnable onUpdate = new Runnable(){
+		public void run() {
+			while(true){
+				if(isGameReady){
+					ball.x += ball.dX;
+					ball.y += ball.dY;
+					int x = ball.x + 10;
+					int y = ball.y + 10;
+					int pW = 20;
+					int pH = 60;
+					//Checking collision for the two player paddles if the
+					//ball is colliding with the paddle
+					for(int i = 0; i < list_players.size(); i++){
+						int pX = list_players.get(i).x;
+						int pY = list_players.get(i).y;
+						if(x  > pX && x < pX + pW && y > pY && y < pY + pH){
+							ball.dX = -ball.dX;
+							//Calculating where the ball will go after being hit off
+							//the paddle, same as in brick breaker
+							ball.dY = (pX + (pH / 2)) - (y + 10);
+						}
+					}
+					if(x > Display.getWidth()){
+						//The Left sided player scores
+						list_players.get(0).score += 1;
+						//Resets the location of the ball :p
+						x = Display.getWidth() / 2;
+						y = Display.getHeight() / 2;
+					}
+					if(x < 0){
+						//The Right side player scores
+						list_players.get(1).score += 1;
+						//Resets the location of the ball :p
+						x = Display.getWidth() / 2;
+						y = Display.getHeight() / 2;
+					}
+				}
+			}
+		}
+	};
 	private static Runnable accept = new Runnable()
 	{
 		@Override
 		public void run()
 		{
-			new Thread(send).start();
-			new Thread(receive).start();
+
+			new Thread(onUpdate).start();
 			
 			while (true)
 			{
-					System.out.println(list_sockets.size());
-				try
-				{
-					
+				//Notifying console the amount of people connected currently
+				numPeopleConnected++;
+				System.out.println(numPeopleConnected);
+				try{
+					//Server accepts the user and is made a socket connection
 					Socket socket = server.accept();
 					
-					ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-					
-					String username = (String) ois.readObject();
-					
-					boolean accepted = true;
-					
-					for (int i = 0; i < list_data.size(); i++)
-					{
-						if (list_data.get(i).username.toLowerCase().equals(username.toLowerCase()))
-						{
-							accepted = false;
-							break;
-						}
-					}
+					list_clients_model.addElement(numPeopleConnected + " - " + socket.getInetAddress().getHostAddress() + " - " + socket.getInetAddress().getHostName());
+					list_client_states.add(0);
+					list_sockets.add(socket);
 					
 					ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-					
-					if (accepted)
-					{
-						oos.writeObject("Welcome To This Server...");
-						String lol = (String) JOptionPane.showInputDialog(null, "Message?: ", "Alert!", JOptionPane.ERROR_MESSAGE);
-						oos.writeObject(lol);
-						list_clients_model.addElement(username + " - " + socket.getInetAddress().getHostAddress() + " - " + socket.getInetAddress().getHostName());
-						list_client_states.add(0);
-						
-						list_data.add(new DataPackage());
-						list_sockets.add(socket);
-					}
-					else
-					{
-						oos.writeObject("Your name is already taken!");
+					if(numPeopleConnected == 1){
+						oos.writeObject("Waiting for second player; when connected game will start!");
+						//Adds first player to array
+					}else if(numPeopleConnected == 2){
+						isGameReady = true;
+						//Adds second player to array
+						//Start the send + receive threads! :D
+						new Thread(send).start();
+						new Thread(receive).start();
 					}
 				}
 				catch (Exception ex) {}
 			}
 		}
 	};
+	
 	public static void updateArray(){
 		synchronized(list_sockets){
 			for(int i = 0; i < list_sockets.size(); i++){
@@ -115,6 +163,11 @@ public class Main
 				
 			}
 		}
+		synchronized(list_players){
+			for(int i = 0; i < list_data.size(); i++){
+				
+			}
+		}
 	}
 	private static Runnable send = new Runnable()
 	{
@@ -126,29 +179,16 @@ public class Main
 			while (true)
 			{
 				updateArray();
-				for (int i = 0; i < list_sockets.size(); i++)
-				{
-					try
-					{
-						oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
-						int client_state = list_client_states.get(i);
-						oos.writeObject(client_state);
-						
-						oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
-						oos.writeObject(list_data);
-						
-						if (client_state == 1) // Kicked by Server
-						{
-							disconnectClient(i);
-							i--;
-						}
-						else if (client_state == 2) // Server Disconnected
-						{
-							disconnectClient(i);
-							i--;
-						}
+				if(isGameReady){
+					/*
+					* First the server is going to 
+					*/
+					for(int i = 0; i < 2; i++){
+						try{
+							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
+							oos.writeObject(list_players.get(i));
+						}catch(Exception ex){}
 					}
-					catch (Exception ex) {}
 				}
 			}
 		}
@@ -164,25 +204,18 @@ public class Main
 			while (true)
 			{
 				updateArray();
-				for (int i = 0; i < list_sockets.size(); i++)
-				{
-					try
-					{
-						ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
-						int receive_state = (Integer) ois.readObject();
-						
-						ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
-						DataPackage dp = (DataPackage) ois.readObject();
-						
-						list_data.set(i, dp);
-						if (receive_state == 1) // Client Disconnected by User
-						{
-							disconnectClient(i);
-							i--;
-						}
-					}
-					catch (Exception ex) // Client Disconnected (Client Didn't Notify Server About Disconnecting)
-					{
+				
+				
+				if(isGameReady){
+					/*
+					* First the server is going to 
+					*/
+					for(int i = 0; i < 2; i++){
+						try{
+							ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
+							Player p = (Player) ois.readObject();
+							list_players.set(i, p);
+						}catch(Exception ex){}
 					}
 				}
 			}
