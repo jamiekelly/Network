@@ -45,7 +45,7 @@ public class MainServer
 	//It's set to -1 because the code is run once started, and every
 	//time someone connects to the server; so to make it 0 when the first
 	//player joins, it should be set to -1 :p
-	public static int numPeopleConnected = -1;
+	public static int numPeopleConnected = 0;
 	public static ServerSocket server;
 	
 	//Server side location of player one!
@@ -100,6 +100,13 @@ public class MainServer
 						x = Display.getWidth() / 2;
 						y = Display.getHeight() / 2;
 						//TODO Set a wait time for reset?
+						/*
+						 * That's actually a good idea, how about a count down
+						 * like when the ball is reset then it will spawn back in
+						 * like 2 seconds or something? or the player who scored
+						 * gets to start it?
+						 * -Rob
+						 */
 					}
 				}
 			}
@@ -127,13 +134,15 @@ public class MainServer
 					list_sockets.add(socket);
 					
 					ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+					oos.writeObject(numPeopleConnected - 1);
 					if(numPeopleConnected == 1)
 					{
-						oos.writeObject("Waiting for second player; when connected game will start!");
+						System.out.println("one player!");
 						//Adds first player to array
 					}
 					else if(numPeopleConnected == 2) //TODO Shouldn't this either be set to "== 1" or change initial val of numPeopleConnected = 0?
 					{
+						System.out.println("two player!");
 						isGameReady = true;
 						//Adds second player to array
 						//Start the send + receive threads! :D
@@ -219,7 +228,6 @@ public class MainServer
 					*/
 					for(int i = 0; i < 2; i++){
 						try{
-							System.out.println("Reading");
 							ois = new ObjectInputStream(list_sockets.get(i).getInputStream());
 							Player p = (Player) ois.readObject();
 							list_players.set(i, p);

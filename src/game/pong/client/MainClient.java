@@ -1,5 +1,7 @@
 package game.pong.client;
 
+import game.pong.Server.Player;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -62,8 +64,12 @@ public class MainClient {
 	
 	static int x = 0;
 	static int y;
+	//location of Y last tick
+	static int lY;
 	static int p2X = 0;
 	static int p2Y;
+	//location of Y last tick
+	static int l2Y;
 	
 	static int ballx;
 	static int bally;
@@ -72,7 +78,7 @@ public class MainClient {
 	static int port = 7777;
 	static String ip = "82.71.22.183";
 	public static Socket socket;
-	
+
 	public MainClient()
 	{
 		if(!applet)
@@ -94,10 +100,12 @@ public class MainClient {
 		/*The 30 will need to be changed if paddle heights are modified*/
 		
 		y = (Display.getHeight()/2) - 30; 
+		lY = y;
 		p2Y = (Display.getHeight()/2) - 30;
+		l2Y = p2Y;
 		
 		ballx = Display.getHeight()/2;
-		bally = Display.getHeight()/2;	
+		bally = Display.getHeight()/2;
 		
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
@@ -134,8 +142,17 @@ public class MainClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ObjectInputStream ois;
+		try {
+			ois = new ObjectInputStream(socket.getInputStream());
+			playerNum = (Integer) ois.readObject();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		while(!Display.isCloseRequested())
 		{
+			send();
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			/* Controls */
@@ -143,7 +160,11 @@ public class MainClient {
 			{
 				if(y > 0)
 				{
+					if(playerNum == 0){
 						y -= 5;
+					}else{
+						p2Y -= 5;
+					}
 					//TODO Update server about location
 				}
 			}
@@ -151,7 +172,11 @@ public class MainClient {
 			{
 				if(y + 60 < Display.getHeight())
 				{
-					y += 5;
+					if(playerNum == 0){
+						y += 5;
+					}else{
+						p2Y += 5;
+					}
 					//TODO Update server about location
 				}
 			}
@@ -173,14 +198,14 @@ public class MainClient {
 			 * .       .
 			 * 4.......3
 			 */
-			glBegin(GL_QUADS);  // Player 0 paddle, Right paddle
+			glBegin(GL_QUADS);  // Player 0 paddle, Left paddle
 				glVertex2i(x , y);	//1
 				glVertex2i(x + 20 , y);	//2
 				glVertex2i(x + 20, y + 60);	//3
 				glVertex2i(x , y + 60);	//4
 			glEnd();
 			
-			glBegin(GL_QUADS);  // Player 1 paddle, Left paddle
+			glBegin(GL_QUADS);  // Player 1 paddle, Right paddle
 				glVertex2i(Display.getWidth() - 20, p2Y); //1
 				glVertex2i(Display.getWidth(), p2Y); //2
 				glVertex2i(Display.getWidth(), p2Y + 60); //3
@@ -199,16 +224,36 @@ public class MainClient {
 	}
 	
 	public static void send(){
+		//Get the previous location of x
 		ObjectOutputStream oos;
 					try
 					{
 						Player dp = new Player();
-						dp.x = x;
-						dp.y = y;
 						
-						oos = new ObjectOutputStream(socket.getOutputStream());
-						oos.writeObject(dp);
-						Thread.sleep(100);
+						if(playerNum == 0){
+							if(lY != y){
+								
+								dp.x = x;
+								dp.y = y;
+								System.out.println("Sending 0");
+								oos = new ObjectOutputStream(socket.getOutputStream());
+								oos.writeObject(dp);
+							}
+						}else{
+							if(l2Y != p2Y){
+							
+								dp.x = p2X;
+								dp.y = p2Y;
+								System.out.println("Sending 1");
+								oos = new ObjectOutputStream(socket.getOutputStream());
+								oos.writeObject(dp);
+							}
+						}
+						
+						
+						
+						lY = y;
+						l2Y = p2Y;
 					}catch(Exception e){}
 			
 		
