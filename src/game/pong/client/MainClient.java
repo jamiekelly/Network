@@ -244,7 +244,7 @@ public class MainClient {
 					score0 = p.score;
 					System.out.println("22222 Y: " + p.y + " ID: " + p.playerNum);
 				}
-				Thread.sleep(100);
+				Thread.sleep(10);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
