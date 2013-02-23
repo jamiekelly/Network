@@ -34,23 +34,40 @@ public class Main {
 	
 	static int playerNum = 0;
 	
-	static int y = 0;
-	static int p2Y = 0;
+	static int x = 0;
+	static int y;
+	static int p2X = 0;
+	static int p2Y;
+	
+	static int ballx;
+	static int bally;	
 	
 	
-	public Main(){
-		if(!applet){
-			try{
+	public Main()
+	{
+		if(!applet)
+		{
+			try
+			{
 			
 				Display.setDisplayMode(new DisplayMode(600, 400));
 				Display.setTitle("Two player pong! Over the Internet!");//Isn't
 				Display.create();//isn't
 				Display.setResizable(false);//isn't
 			
-			}catch(LWJGLException e){
-			e.printStackTrace();
+			}catch(LWJGLException e)
+			{
+				e.printStackTrace();
 			}
 		}
+		
+		/*The 30 will need to be changed if paddle heights are modified*/
+		
+		y = (Display.getHeight()/2) - 30; 
+		p2Y = (Display.getHeight()/2) - 30;
+		
+		ballx = Display.getHeight()/2;
+		bally = Display.getHeight()/2;	
 		
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
@@ -62,8 +79,52 @@ public class Main {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 		
-		while(!Display.isCloseRequested()){
+		while(!Display.isCloseRequested())
+		{
 			glClear(GL_COLOR_BUFFER_BIT);
+			
+			/* Controls */
+			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Left side paddle, player 0
+			{
+				if(y > 0)
+				{
+					y -= 5;
+					//TODO Update server about location
+				}
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+			{
+				if(y + 60 < Display.getHeight())
+				{
+					y += 5;
+					//TODO Update server about location
+				}
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_W)) //Right side paddle, player 1
+			{
+				if(p2Y > 0)
+				{
+					p2Y -= 5;
+					//TODO Update server about location
+				}
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_S))
+			{
+				if(p2Y + 60 < Display.getHeight())
+				{
+					p2Y += 5;
+					//TODO Update server about location
+				}
+			}
+			
+			/*Text at the top of the screen*/
+			Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 1);
+			Font.drawString(score0, (Display.getWidth()*.25)-40, 20, 1);
+			Font.drawString(score1, (Display.getWidth()*.75)-40, 20, 1);
+			
+			/* */
+			
+			
 			
 			/*
 			 * 1.......2
@@ -72,40 +133,18 @@ public class Main {
 			 * .       .
 			 * 4.......3
 			 */
-			
-			if(Keyboard.isKeyDown(Keyboard.KEY_UP)){
-				if(y > 0){
-					y -= 5;
-				}
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
-				if(y + 60 < Display.getHeight()){
-					y += 5;
-				}
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-				if(y > 0){
-					p2Y -= 5;
-				}
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-				if(y + 60 < Display.getHeight()){
-					p2Y += 5;
-				}
-			}
-			
 			glBegin(GL_QUADS);
-				glVertex2i(0 , y);	//1
-				glVertex2i(0 + 20 , y);	//2
-				glVertex2i(0 + 20, y + 60);	//3
-				glVertex2i(0 , y + 60);	//4
+				glVertex2i(x , y);	//1
+				glVertex2i(x + 20 , y);	//2
+				glVertex2i(x + 20, y + 60);	//3
+				glVertex2i(x , y + 60);	//4
 			glEnd();
 			
 			glBegin(GL_QUADS);
-				glVertex2i(Display.getWidth() - 20, p2Y);
-				glVertex2i(Display.getWidth(), p2Y);
-				glVertex2i(Display.getWidth(), p2Y + 60);
-				glVertex2i(Display.getWidth() - 20, p2Y + 60);
+				glVertex2i(Display.getWidth() - 20, p2Y); //1
+				glVertex2i(Display.getWidth(), p2Y); //2
+				glVertex2i(Display.getWidth(), p2Y + 60); //3
+				glVertex2i(Display.getWidth() - 20, p2Y + 60); //4
 			glEnd();
 			
 			Display.sync(60);
@@ -113,7 +152,8 @@ public class Main {
 		}
 	}
 	
-	public static void main(String []args){
+	public static void main(String []args)
+	{
 		new Main();
 	}
 }
