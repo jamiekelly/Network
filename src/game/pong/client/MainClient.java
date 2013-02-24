@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import javax.swing.JOptionPane;
 
@@ -33,6 +34,7 @@ import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glColor3f;
 
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
@@ -57,6 +59,13 @@ public class MainClient {
 	static int y;
 	static int p2X;
 	static int p2Y;
+	
+	static int x2 = 0;
+	static int y2 = 0;
+	static int x3 = 0;
+	static int y3 = 0;
+	static int x4 = 0;
+	static int y4 = 0;
 	
 	static Ball ball = new Ball();
 	static int ballX;
@@ -159,8 +168,13 @@ public class MainClient {
 		new Thread(receive).start();
 		new Thread(send).start();
 		}
+		float r,g,b;
+		Random random = new Random();
 		while(!Display.isCloseRequested())
 		{
+			r = random.nextFloat();
+			g = random.nextFloat();
+			b = random.nextFloat();
 			ball.x = ballX;
 			ball.y = ballY;
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -208,6 +222,15 @@ public class MainClient {
 			 * .       .
 			 * 4.......3
 			 */
+			
+			glColor3f(r,g,b);
+			glBegin(GL_QUADS);  // Player 0 paddle, Left paddle
+			glVertex2i(0 , 0);	//1
+				glVertex2i(Display.getWidth(), 0);	//2
+				glVertex2i(Display.getWidth(), Display.getHeight());	//3
+				glVertex2i(0 , Display.getHeight());	//4
+			glEnd();
+			glColor3f(1,1,1);
 			glBegin(GL_QUADS);  // Player 0 paddle, Left paddle
 				glVertex2i(x , y);	//1
 				glVertex2i(x + 20 , y);	//2
@@ -330,7 +353,11 @@ public class MainClient {
 			
 			while(true){
 				if(true){
-					
+					if(ball.dX > 0){
+						ball.dX += 0.2;
+					}else{
+						ball.dX -= 0.2;
+					}
 					ballX -= ball.dX;
 					ballY -= ball.dY;
 					
@@ -357,11 +384,15 @@ public class MainClient {
 					}
 					if(ballX > Display.getWidth()){
 						score0 ++;
+						ball.dX = 5;
+						ball.dY = 0;
 						ballX = Display.getWidth() / 2;
 						ballY = Display.getHeight() / 2;
 					}
 					if(ballX < 0){
 						score1 ++;
+						ball.dX = 5;
+						ball.dY = 0;
 						ballX = Display.getWidth() / 2;
 						ballY = Display.getHeight() / 2;
 					}
