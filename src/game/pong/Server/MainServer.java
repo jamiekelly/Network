@@ -27,6 +27,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 
 
@@ -34,6 +35,19 @@ public class MainServer
 {
 	public static int port = 7777;
 	public static String ip = "";
+	
+	private static long lastFrame;
+
+    private static long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
+
+    private static int getDelta() {
+        long currentTime = getTime();
+        int delta = (int) (currentTime - lastFrame);
+        lastFrame = getTime();
+        return delta;
+    }
 	
 	//When game will be ready then both players will be brought
 	//in game and the ball will appear and players will be able to
@@ -60,13 +74,29 @@ public class MainServer
 	public static ArrayList<Socket> list_sockets = new ArrayList<Socket>();
 	public static ArrayList<Integer> list_client_states = new ArrayList<Integer>();
 	public static ArrayList<DataPackage> list_data = new ArrayList<DataPackage>();
+	private static Runnable movement = new Runnable()
+	{
+		public void run(){
+			while(true){
+				
+				ball.x += (ball.dX * 0.00005);
+				ball.y += (ball.dY * 0.00005);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	};
 	private static Runnable onUpdate = new Runnable(){
-		public void run() {
+		public void run() 
+		{
+			new Thread(movement).start();
 			while(true){
 				if(isGameReady){
-					System.out.println("Working, kind of?");
-					ball.x += ball.dX;
-					ball.y += ball.dY;
+					
 					int x = ball.x + 10;
 					int y = ball.y + 10;
 					int pW = 20;
@@ -105,6 +135,12 @@ public class MainServer
 						 * gets to start it?
 						 * -Rob
 						 */
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					}
 				}
 			}
@@ -199,8 +235,6 @@ public class MainServer
 					*/
 					for(int i = 0; i < list_players.size(); i++){
 						try{
-							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
-							oos.writeObject(ball);
 							
 							//Send player data to each other
 							oos = new ObjectOutputStream(list_sockets.get(i).getOutputStream());
@@ -213,6 +247,8 @@ public class MainServer
 							}
 							oos.writeObject(list_players.get(num));
 							
+							oos.writeObject(ball.x);
+							oos.writeObject(ball.y);
 							
 							Thread.sleep(20);
 						}catch(Exception ex){

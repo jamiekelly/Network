@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -51,31 +52,25 @@ public class MainClient {
 	
 	static int score0 = 0;
 	static int score1 = 0;
-	static int score(int num){
-		if(num == 0){
-			return score0;
-		}else{
-			return score1;
-		}
-	}
 	
 	static int x = 0;
 	static int y;
-	//location of Y last tick
-	static int lY;
-	static int p2X = 0;
+	static int p2X;
 	static int p2Y;
-	//location of Y last tick
-	static int l2Y;
 	
-	static int ballx;
-	static int bally;
+	static Ball ball = new Ball();
+	static int ballX;
+	static int ballY;
+	
+	public static ServerSocket server;
 	
 	//TODO In applet, load parameters from here
 	static int port = 7777;
 	static String ip = "82.71.22.183";
 	public static Socket socket;
 
+	
+	
 	public MainClient()
 	{
 		if(!applet)
@@ -95,14 +90,12 @@ public class MainClient {
 		}
 		
 		/*The 30 will need to be changed if paddle heights are modified*/
-		
 		y = (Display.getHeight()/2) - 30; 
-		lY = y;
 		p2Y = (Display.getHeight()/2) - 30;
-		l2Y = p2Y;
+		p2X = (Display.getWidth() - 20);
 		
-		ballx = Display.getHeight()/2;
-		bally = Display.getHeight()/2;
+		ballX = Display.getHeight()/2;
+		ballY = Display.getHeight()/2;
 		
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
@@ -113,9 +106,26 @@ public class MainClient {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
-		
+		String isServer = (String) JOptionPane.showInputDialog(null, "Is server? (yes/no): ", "Do it", JOptionPane.INFORMATION_MESSAGE);
+		if(isServer.toLowerCase().equals("yes")){
+			playerNum = 0;
+			
+			try {
+				
+				ip = InetAddress.getLocalHost().getHostAddress() + ":" + port;
+				server = new ServerSocket(port, 0, InetAddress.getLocalHost());
+				new Thread(accept).start();
+				
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			
+		}else{
+			playerNum = 1;
 		String local;
-		
 		try
 		{
 			local = InetAddress.getLocalHost().getHostAddress() + ":" + port;
@@ -124,7 +134,6 @@ public class MainClient {
 		{
 			local = "Network Error";
 		}
-		
 		ip = (String) JOptionPane.showInputDialog(null, "IP: ", "Info", JOptionPane.INFORMATION_MESSAGE, null, null, local);
 		
 		port = Integer.parseInt(ip.substring(ip.indexOf(":") + 1));
@@ -142,15 +151,18 @@ public class MainClient {
 		ObjectInputStream ois;
 		try {
 			ois = new ObjectInputStream(socket.getInputStream());
-			playerNum = (Integer) ois.readObject();
+			JOptionPane.showMessageDialog(null, (String) ois.readObject());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			new Thread(receive).start();
-			new Thread(send).start();
+		new Thread(receive).start();
+		new Thread(send).start();
+		}
 		while(!Display.isCloseRequested())
 		{
+			ball.x = ballX;
+			ball.y = ballY;
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			/* Controls */
@@ -211,11 +223,11 @@ public class MainClient {
 			glEnd();
 			
 			//Ball
-			glBegin(GL_QUADS);//Bally thingy
-				glVertex2i(ballx, bally); //1
-				glVertex2i(ballx + 20, bally); //2
-				glVertex2i(ballx + 20, bally + 20); //3
-				glVertex2i(ballx, bally + 20); //4
+			glBegin(GL_QUADS);//ballY thingy
+				glVertex2i(ballX, ballY); //1
+				glVertex2i(ballX + 20, ballY); //2
+				glVertex2i(ballX + 20, ballY + 20); //3
+				glVertex2i(ballX, ballY + 20); //4
 			glEnd();
 			Display.sync(60);
 			Display.update();
@@ -227,6 +239,28 @@ public class MainClient {
 	{
 		new MainClient();
 	}
+	private static Runnable accept = new Runnable()
+	{
+		public void run()
+		{
+			try
+			{
+				socket = server.accept();
+				
+				ObjectOutputStream oos;
+				oos = new ObjectOutputStream(socket.getOutputStream());
+				oos.writeObject("Welcome to the server!");
+				
+				new Thread(send).start();
+				new Thread(receive).start();
+				new Thread(onUpdate).start();
+			}
+			catch(Exception e)
+			{
+			
+			}
+		}
+	};
 	private static Runnable receive = new Runnable()
 	{
 		public void run()
@@ -236,29 +270,23 @@ public class MainClient {
 			{
 				try
 				{
-					//Receiving the ball class
-					ois = new ObjectInputStream(socket.getInputStream());
-					Ball b = (Ball) ois.readObject();
 					
-					ballx = b.x;
-					bally = b.y;
-					
-					ois = new ObjectInputStream(socket.getInputStream());
-					Player p = (Player) ois.readObject();	
-					
-					if(p.playerNum == 1 && playerNum == 0)
-					{
-						p2X = p.x;
-						p2Y = p.y;
-						score1 = p.score;
-						System.out.println("Y: " + p.y + " ID: " + p.playerNum);
+					if(playerNum == 0){
+						ois = new ObjectInputStream(socket.getInputStream());
+						p2Y = (Integer) ois.readObject();
 					}
-					if(p.playerNum == 0 && playerNum == 1)
-					{
-						x = p.x;
-						y = p.y;
-						score0 = p.score;
-						System.out.println("22222 Y: " + p.y + " ID: " + p.playerNum);
+					if(playerNum == 1){
+						ois = new ObjectInputStream(socket.getInputStream());
+						y = (Integer) ois.readObject();
+						ois = new ObjectInputStream(socket.getInputStream());
+						Ball b = (Ball) ois.readObject();
+						ballX = b.x;
+						ballY = b.y;
+						
+						ois = new ObjectInputStream(socket.getInputStream());
+						score0 = (Integer) ois.readObject();
+						ois = new ObjectInputStream(socket.getInputStream());
+						score1 = (Integer) ois.readObject();
 					}
 				Thread.sleep(10);
 			}catch(Exception e){
@@ -276,38 +304,91 @@ public class MainClient {
 		while(true){
 					try
 					{
-						
-						if(playerNum == 0)
-						{
-							if(true)
-							{
-								Player p = new Player();
-								p.x = x;
-								p.y = y;
-								p.playerNum = playerNum;
-								oos = new ObjectOutputStream(socket.getOutputStream());
-								oos.writeObject(p);
-							}
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						if(playerNum == 0){
+							oos.writeObject(y);
+							oos = new ObjectOutputStream(socket.getOutputStream());
+							oos.writeObject(ball);
+							
+							oos = new ObjectOutputStream(socket.getOutputStream());
+							oos.writeObject(score0);
+							
+							oos = new ObjectOutputStream(socket.getOutputStream());
+							oos.writeObject(score1);
 						}
-						else if(playerNum == 1)
-						{
-							if(true)
-							{
-								Player p1 = new Player();
-								p1.x = p2X;
-								p1.y = p2Y;
-								p1.playerNum = playerNum;
-								
-								oos = new ObjectOutputStream(socket.getOutputStream());
-								oos.writeObject(p1);
-							}
+						if(playerNum == 1){
+							oos.writeObject(p2Y);
 						}
-						
-						lY = y;
-						l2Y = p2Y;
-						Thread.sleep(100);
+						Thread.sleep(20);
 					}catch(Exception e){}
 			}
 		}
+	};
+	private static Runnable onUpdate = new Runnable(){
+		public void run() 
+		{
+			
+			while(true){
+				if(true){
+					
+					ballX -= ball.dX;
+					ballY -= ball.dY;
+					
+					int bX = ballX + 10;
+					int bY = ballY + 10;
+					System.out.println(bX + "  :  " + bY);
+					int pW = 20;
+					int pH = 60;
+					//Checking collision for the two player paddles if the
+					//ball is colliding with the paddle
+					boolean one = bX >= x && bX <= x + 20 && bY >= y && bY <= y + 60;
+					boolean two = bX >= p2X && bX <= p2X + 20 && bY >= p2Y && bY <= p2Y + 60;
+					if(one){
+						ball.dX = -ball.dX;
+						//Calculating where the ball will go after being hit off
+						//the paddle, same as in brick breaker
+						ball.dY = ((y + (20 / 2)) - (bY + 10)) / 10;
+					}
+					if(two){
+						ball.dX = -ball.dX;
+						//Calculating where the ball will go after being hit off
+						//the paddle, same as in brick breaker
+						ball.dY = ((p2Y + (20 / 2)) - (bY + 10)) / 10;
+					}
+					if(ballX > Display.getWidth()){
+						score0 ++;
+						ballX = Display.getWidth() / 2;
+						ballY = Display.getHeight() / 2;
+					}
+					if(ballX < 0){
+						score1 ++;
+						ballX = Display.getWidth() / 2;
+						ballY = Display.getHeight() / 2;
+					}
+					if(ballY < 0){
+						ballY = 1;
+						ball.dY = -ball.dY;
+					}
+					if(ballY > Display.getHeight()){
+						ballY = Display.getHeight() - 1;
+						ball.dY = -ball.dY;
+					}
+						/*
+						 * That's actually a good idea, how about a count down
+						 * like when the ball is reset then it will spawn back in
+						 * like 2 seconds or something? or the player who scored
+						 * gets to start it?
+						 * -Rob
+						 */
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					}
+				}
+			}
+		
 	};
 }

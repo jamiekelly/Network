@@ -8,6 +8,6 @@ public class Ball implements Serializable{
 	public int x = Display.getWidth() / 2;
 	public int y = Display.getHeight() / 2;
 	
-	public int dX = 5;
-	public int dY = 0;
+	public double dX = 2;
+	public double dY = 0;
 }
