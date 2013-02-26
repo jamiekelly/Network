@@ -42,6 +42,13 @@ public class MainClient {
 	static boolean applet = false;
 	static boolean isPaused = false;
 	
+	//Checking which player pa
+	static boolean isPlayer1Paused = false;
+	static boolean isPlayer2Paused = false;
+	
+	//String set to empty for the starter, because it's going to be 
+	//drawn on screen the whole time, if it's blank, then nothing will be there :)
+	static String whoPausedTheGame = "";
 	static int playerNum = 0;
 	
 	static int score0 = 0;
@@ -168,38 +175,53 @@ public class MainClient {
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			/* Controls */
-			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+			//This should have been in the while loop, so ESCAPE isn't registered
+			//more than one time at a time, so it's like a toggle switch
+			while(Keyboard.next())
 			{
-				if(isPaused==false){
-					isPaused=true;
-				}
-				if(isPaused==true){
-					isPaused=false;
-				}
-			}
-			if(isPaused==false)
-			{
-				if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddle
+				if(Keyboard.getEventKeyState())
 				{
-					if(y > 0)
+					if(Keyboard.isKeyDown(Keyboard.KEY_P))
 					{
 						if(playerNum == 0){
-							y -= 5;
-						}else{
-							p2Y -= 5;
+							if(isPlayer1Paused == false){
+								isPlayer1Paused = true;
+							}else if(isPlayer1Paused == true){
+								isPlayer1Paused = false;
+							}
 						}
-						
+						if(playerNum == 1){
+							if(isPlayer2Paused == false){
+								isPlayer2Paused = true;
+							}else if(isPlayer2Paused == true){
+								isPlayer2Paused = false;
+							}
+						}
 					}
 				}
-				if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+			}
+			//Changed from == false because I think it seems nicer like this. Don't know why
+			
+			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddle
+			{
+				if(y > 0)
 				{
-					if(y + 60 < Display.getHeight())
-					{
-						if(playerNum == 0){
-							y += 5;
-						}else{
-							p2Y += 5;
-						}
+					if(playerNum == 0 && !isPlayer1Paused){
+						y -= 5;
+					}else if(playerNum == 1 && !isPlayer2Paused){
+						p2Y -= 5;
+					}
+					
+				}
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+			{
+				if(y + 60 < Display.getHeight())
+				{
+					if(playerNum == 0 && !isPlayer1Paused){
+						y += 5;
+					}else if(playerNum == 1 && !isPlayer2Paused){
+						p2Y += 5;
 					}
 				}
 			}
@@ -209,6 +231,12 @@ public class MainClient {
 			Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 1);
 			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1);
 			
+			//Drawing the Who paused the game text :p
+			//Setting text color to Cyan
+			glColor3f(0, 1, 1);
+			Fonts.drawString(whoPausedTheGame, 0, Display.getHeight() / 2,  5);
+			//Setting color back to white
+			glColor3f(1, 1, 1);
 			/*
 			 * 1.......2
 			 * .       .
@@ -216,13 +244,7 @@ public class MainClient {
 			 * .       .
 			 * 4.......3
 			 */
-			glBegin(GL_QUADS);  // Display window color
-			glVertex2i(0 , 0);	//1
-				glVertex2i(Display.getWidth(), 0);	//2
-				glVertex2i(Display.getWidth(), Display.getHeight());	//3
-				glVertex2i(0 , Display.getHeight());	//4
-			glEnd();
-			glColor3f(1,1,1);
+			
 			
 			glBegin(GL_QUADS);  // Player 0 paddle, Left paddle
 				glVertex2i(x , y);	//1
@@ -245,6 +267,27 @@ public class MainClient {
 				glVertex2i(ballX + 20, ballY + 20); //3
 				glVertex2i(ballX, ballY + 20); //4
 			glEnd();
+			//Here we draw the text on who paused the screen! :p
+			if(isPaused){
+				if(playerNum == 0){
+					if(isPlayer1Paused || isPlayer2Paused){
+						if(isPlayer1Paused){
+							whoPausedTheGame = "Player one paused the game";
+						}else if(isPlayer2Paused){
+							whoPausedTheGame = "Player two paused the game";
+						}
+					}
+				}else if(playerNum == 1){
+					if(!isPlayer2Paused){
+						whoPausedTheGame = "Player one paused the game!";
+					}else if(isPlayer2Paused){
+						whoPausedTheGame = "Player two paused the game!";
+					}
+				}
+			}else{
+				//Setting the variable to blank so no text is rendered
+				whoPausedTheGame = "";
+			}
 			Display.sync(60);
 			Display.update();
 			
@@ -290,7 +333,8 @@ public class MainClient {
 					if(playerNum == 0){
 						ois = new ObjectInputStream(socket.getInputStream());
 						p2Y = (Integer) ois.readObject();
-						isPaused = (Boolean) ois.readObject();
+						ois = new ObjectInputStream(socket.getInputStream());
+						isPlayer2Paused = (Boolean) ois.readObject();
 					}
 					if(playerNum == 1){
 						ois = new ObjectInputStream(socket.getInputStream());
@@ -302,8 +346,11 @@ public class MainClient {
 						
 						ois = new ObjectInputStream(socket.getInputStream());
 						score0 = (Integer) ois.readObject();
+						
 						ois = new ObjectInputStream(socket.getInputStream());
 						score1 = (Integer) ois.readObject();
+						
+						ois = new ObjectInputStream(socket.getInputStream());
 						isPaused = (Boolean) ois.readObject();
 					}
 				Thread.sleep(10);
@@ -334,11 +381,19 @@ public class MainClient {
 							oos = new ObjectOutputStream(socket.getOutputStream());
 							oos.writeObject(score1);
 							
+							//Sending player 2 if game is paused, only sending one
+							//variable and not two because if the game is paused
+							//and player one didn't pause it, then obviously it was
+							//player two that paused it.
+							//I did it like this because otherwise it was throwing errors
+							//and I didn't like that! :)
 							oos = new ObjectOutputStream(socket.getOutputStream());
 							oos.writeObject(isPaused);
 						}
 						if(playerNum == 1){
 							oos.writeObject(p2Y);
+							oos = new ObjectOutputStream(socket.getOutputStream());
+							oos.writeObject(isPlayer2Paused);
 						}
 						Thread.sleep(20);
 					}catch(Exception e){}
@@ -349,19 +404,35 @@ public class MainClient {
 		public void run() 
 		{
 			while(true){
-				if(isPaused==false){
+				
+				/*
+				 * Here I'm gonig to check if either one of the players are paused
+				 * naturally, if they are the global isPaused variable is going
+				 * to be set. this will just stop the ball and will not stop the
+				 * players from moving
+				 * 
+				 * The variables isPlayer1Paused and isPlayer2Paused are going to both
+				 * act as checks for the main isPaused variable and for the movement 
+				 * keys, regarding to which playerNum you have been assigned :)
+				 */
+				if(isPlayer1Paused || isPlayer2Paused){
+					isPaused = true;
+				}else{
+					isPaused = false;
+				}
 					if(true){
-						if(ball.dX > 0){
-							ball.dX += 0.2;
-						}else{
-							ball.dX -= 0.2;
+						if(!isPaused){
+							if(ball.dX > 0){
+								ball.dX += 0.2;
+							}else{
+								ball.dX -= 0.2;
+							}
+							ballX -= ball.dX;
+							ballY -= ball.dY;
 						}
-						ballX -= ball.dX;
-						ballY -= ball.dY;
-						
 						int bX = ballX + 10;
 						int bY = ballY + 10;
-						System.out.println(bX + "  :  " + bY);
+						
 						//Checking collision for the two player paddles if the
 						//ball is colliding with the paddle
 						boolean one = bX >= x && bX <= x + 20 && bY >= y && bY <= y + 60;
@@ -419,10 +490,8 @@ public class MainClient {
 							e.printStackTrace();
 						}
 					}
-				}else{
-					Fonts.drawString("Paused" + "", (int)(Display.getWidth()/2)-40, Display.getHeight()/2, 1);
 				}
-			}
+			
 		}
 	};
 }
