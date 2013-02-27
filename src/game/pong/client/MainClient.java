@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import org.lwjgl.LWJGLException;
@@ -61,6 +63,9 @@ public class MainClient {
 	private static int p2Y;
 	
 	private static Ball ball = new Ball();
+	
+	//Array List for the following ball
+	public static ArrayList<Ball> ballFollower = new ArrayList<Ball>();
 	
 	public static ServerSocket server;
 	
@@ -184,6 +189,9 @@ public class MainClient {
 			}
 		}
 		
+		for(int i = 0; i < 5; i++){
+			ballFollower.add(ball);
+		}
 		
 		/*THE START OF THE GAME SCREEN*/
 		while(!Display.isCloseRequested())
@@ -352,7 +360,20 @@ public class MainClient {
 				glVertex2i(Display.getWidth(), p2Y + 60); //3
 				glVertex2i(Display.getWidth() - 20, p2Y + 60); //4
 			glEnd();
+			//This has to be upside down otherwise they would all be in the same location
+			//So every tick the location is updated
+			ballFollower.set(0, ball);
+			ballFollower.set(1, ballFollower.get(0));
+			ballFollower.set(2, ballFollower.get(1));
+			ballFollower.set(3, ballFollower.get(2));
+			ballFollower.set(4, ballFollower.get(3));
 			
+			//Finally draws all of the balls fallowing :p
+			for(int i = 0; i <ballFollower.size(); i++){
+				glColor3f(1,0,0);
+				ballFollower.get(i).draw();
+				glColor3f(1,1,1);
+			}
 			//Ball
 			glBegin(GL_QUADS);//ball.getY() thingy
 				glVertex2i(ball.getX(), ball.getY()); //1
@@ -400,7 +421,11 @@ public class MainClient {
 			Display.sync(60);
 			Display.update();
 		}
-		//isGameStoped = true;  TODO
+		//If is out of the while loop, System.exit(0) will pretty much
+		//kill the process and Display.destroy destroys the screen being drawn
+		//It also stops the server and such
+		Display.destroy();
+		System.exit(0);
 	}
 
 	private static Runnable accept = new Runnable()
@@ -517,7 +542,6 @@ public class MainClient {
 		{
 			while(true)
 			{
-				System.out.println("Test");
 				if(isPlayer1Paused || isPlayer2Paused){
 					isPaused = true;
 				}else{
@@ -527,23 +551,18 @@ public class MainClient {
 				//Below says ('!isPaused' XOR ('score0 < 21' XOR 'score1 < 21')) so one AND ONLY one of the three statement can be true.
 				if(!isPaused && ((score0 < 21) && (score1 < 21)))
 				{
-					
-						/*SIDE-NOTE:
-						 * If you set an int equal to say 5.5, like the two lines below, the code truncates the .5
-						 * So these two lines aren't doing anything UNLESS 'ball.dX' is a float so it doesn't truncate the decimal.
-						 * Since int (5 + .5) = 5.5 --> int 5.5 == int 5
-						 * 
-						 * I fixed the problem by changing 'ball.dX' to a float.
-						 * DELETE THESE COMMENTS WHEN YOU'RE DONE BY THE WAY!
-						 * */
-						if(ball.getdX() > 0){
-							ball.setdX((float) (ball.getdX() + .002));
-						}else{
-							ball.setdX((float) (ball.getdX() - .002));
-						}//WTF is this part below???
-						ball.setX((int) (ball.getX()-ball.getdX()));
-						ball.setY((int) (ball.getY()-ball.getdY()));
-					//^^^^^^^^^^^^^^^^^^^^^^^
+					//Previously I had been the things set to be doubles, but something
+					//happened and I had to revert to Ints I believe, dX and dY should have
+					//still been doubles
+					if(ball.getdX() > 0){
+						ball.setdX((float) (ball.getdX() + .002));
+					}else{
+						ball.setdX((float) (ball.getdX() - .002));
+					}
+					//This bit updates the movement of the ball. Without it the ball would
+					//just be static and wouldn't move at all :3
+					ball.setX((int) (ball.getX()-ball.getdX()));
+					ball.setY((int) (ball.getY()-ball.getdY()));
 				}
 				
 				int bX = ball.getX() + 10;
@@ -576,6 +595,27 @@ public class MainClient {
 					//the paddle, same as in brick breaker
 					ball.setdX(-ball.getdX());
 					ball.setdY(((P1Y - (20 / 2)) - (bY + 10)) / 10);  //This part is confusing too!!!!
+					/*
+					 * Right, so what I did there was I set the dY according to where the 
+					 * ball was when the ball hit the paddle.
+					 * 
+					 * So the point of where I am calculating is from the middle
+					 * of the both objects, so middle of ball x and ball y, and the
+					 * paddle x and the paddle y. 
+					 * 
+					 * If you imagine that px = the centre of the paddle (
+					 * 									For this we will say that paddle's
+					 * 									x coordinate is 70 and y is 200
+					 * 									Paddle width is 20 and paddle height is 60
+					 * 									so the X coords would be x + (width / 2)
+					 * 									and the Y coord would be y - (height / 2)
+					 * 
+					 * 	So when the ball hits the paddle, the dY is calculated by seeing
+					 * where exactly the paddle is being hit, if above the centre, the ball's dY is going
+					 * to be added, and if it's hitting below the center, it will be subtracted. Depending 
+					 * on how far away the paddle was hit from the centre this will say how large the 
+					 * dY will be
+					 */
 				}
 				if(hitPlayersTwosPaddle)
 				{
