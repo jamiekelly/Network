@@ -40,34 +40,34 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MainClient {
 
 	static boolean applet = false;
-	static boolean isPaused = false;
+	private static boolean isPaused = false;
+	//private volatile boolean isGameStoped = false;TODO
 	
-	static boolean isPlayer1Paused = false;
-	static boolean isPlayer2Paused = false;
-	static int isSinglePlayer;
-	static int difficulty;
+	private static boolean isPlayer1Paused = false;
+	private static boolean isPlayer2Paused = false;
 	
-	static String whoPausedTheGame = "";
-	static int playerNum;
+	private static int isSinglePlayer;
+	private static int difficulty;
 	
-	static int score0 = 0;
-	static int score1 = 20;
+	private static String whoPausedTheGame = "";
+	private static int playerNum;
 	
-	static int P1X = 0;
-	static int P1Y;
-	static int p2X;
-	static int p2Y;
+	private static int score0 = 0;
+	private static int score1 = 0;
 	
-	static Ball ball = new Ball();
-	static int ballX;
-	static int ballY;
+	private static int P1X = 0;
+	private static int P1Y;
+	private static int p2X;
+	private static int p2Y;
+	
+	private static Ball ball = new Ball();
 	
 	public static ServerSocket server;
 	
 	//TODO In applet, load parameters from here
-	static int port = 7777;
-	static String ip = "82.71.22.183";
-	public static Socket socket;
+	private static int port = 7777;
+	private static String ip = "82.71.22.183";
+	private static Socket socket;
 
 	
 	public static void main(String []args)
@@ -94,9 +94,6 @@ public class MainClient {
 		P1Y = (Display.getHeight()/2) - 30; 
 		p2Y = (Display.getHeight()/2) - 30;
 		p2X = (Display.getWidth() - 20);
-		
-		ballX = Display.getHeight()/2;
-		ballY = Display.getHeight()/2;
 		
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
@@ -191,8 +188,8 @@ public class MainClient {
 		/*THE START OF THE GAME SCREEN*/
 		while(!Display.isCloseRequested())
 		{
-			ball.x = ballX;
-			ball.y = ballY;
+			ball.setX(ball.getX());
+			ball.setY(ball.getY());
 			glClear(GL_COLOR_BUFFER_BIT);
 			
 			
@@ -268,7 +265,7 @@ public class MainClient {
 				{
 					if(p2Y > 0)
 					{
-						if(ball.y < p2Y + 30)
+						if(ball.getY() < p2Y + 30)
 						{
 							if(difficulty == 0){
 								p2Y -= 1.5;
@@ -280,13 +277,13 @@ public class MainClient {
 								p2Y -= 4;
 							}
 							if(difficulty == 3){
-								p2Y = ball.y - 30;
+								p2Y = ball.getY() - 30;
 							}
 						}
 					}
 					if(p2Y + 60 < Display.getHeight())
 					{
-						if(ball.y > p2Y + 30)
+						if(ball.getY() > p2Y + 30)
 						{
 							if(difficulty == 0){
 								p2Y += 1.5;
@@ -298,7 +295,7 @@ public class MainClient {
 								p2Y += 4;
 							}
 							if(difficulty == 3){
-								p2Y = ball.y - 30;
+								p2Y = ball.getY() - 30;
 							}
 						}
 					}
@@ -357,11 +354,11 @@ public class MainClient {
 			glEnd();
 			
 			//Ball
-			glBegin(GL_QUADS);//ballY thingy
-				glVertex2i(ballX, ballY); //1
-				glVertex2i(ballX + 20, ballY); //2
-				glVertex2i(ballX + 20, ballY + 20); //3
-				glVertex2i(ballX, ballY + 20); //4
+			glBegin(GL_QUADS);//ball.getY() thingy
+				glVertex2i(ball.getX(), ball.getY()); //1
+				glVertex2i(ball.getX() + 20, ball.getY()); //2
+				glVertex2i(ball.getX() + 20, ball.getY() + 20); //3
+				glVertex2i(ball.getX(), ball.getY() + 20); //4
 			glEnd();
 			
 			//Here we draw the text on who paused the screen! :p
@@ -403,16 +400,15 @@ public class MainClient {
 			Display.sync(60);
 			Display.update();
 		}
+		//isGameStoped = true;  TODO
 	}
-	
+
 	private static Runnable accept = new Runnable()
 	{
 		public void run()
 		{
 			try
 			{
-				
-				
 				if(isSinglePlayer!=0)
 				{
 					
@@ -460,8 +456,8 @@ public class MainClient {
 						ois = new ObjectInputStream(socket.getInputStream());
 						Ball b = (Ball) ois.readObject();
 						
-						ballX = b.x;
-						ballY = b.y;
+						ball.setX(b.getX());
+						ball.setY(b.getY());
 						
 						ois = new ObjectInputStream(socket.getInputStream());
 						score0 = (Integer) ois.readObject();
@@ -529,10 +525,9 @@ public class MainClient {
 				}
 				//((score0 < 21) || (score1 < 21)) && ! ((score0 < 21) && (score1 < 21)) 
 				//Below says ('!isPaused' XOR ('score0 < 21' XOR 'score1 < 21')) so one AND ONLY one of the three statement can be true.
-				if((score0 < 21) && (score1 < 21))
+				if(!isPaused && ((score0 < 21) && (score1 < 21)))
 				{
-					if(!isPaused)
-					{
+					
 						/*SIDE-NOTE:
 						 * If you set an int equal to say 5.5, like the two lines below, the code truncates the .5
 						 * So these two lines aren't doing anything UNLESS 'ball.dX' is a float so it doesn't truncate the decimal.
@@ -541,25 +536,25 @@ public class MainClient {
 						 * I fixed the problem by changing 'ball.dX' to a float.
 						 * DELETE THESE COMMENTS WHEN YOU'RE DONE BY THE WAY!
 						 * */
-						if(ball.dX > 0){
-							ball.dX += .002;
+						if(ball.getdX() > 0){
+							ball.setdX((float) (ball.getdX() + .002));
 						}else{
-							ball.dX -= .002;
+							ball.setdX((float) (ball.getdX() - .002));
 						}//WTF is this part below???
-						ballX -= ball.dX;
-						ballY -= ball.dY;
-					}//^^^^^^^^^^^^^^^^^^^^^^^
+						ball.setX((int) (ball.getX()-ball.getdX()));
+						ball.setY((int) (ball.getY()-ball.getdY()));
+					//^^^^^^^^^^^^^^^^^^^^^^^
 				}
 				
-				int bX = ballX + 10;
-				int bY = ballY + 10;
+				int bX = ball.getX() + 10;
+				int bY = ball.getY() + 10;
 				
 				//TODO fix the bounce off the paddle since it's really screwed up!!
 				/*
 				 * What hell is...
 				 * 
-				 * ballX >>
-				 * BallY >>
+				 * ball.getX() >>
+				 * ball.getY() >>
 				 * bX >>
 				 * bY >>
 				 * ball.dX >>
@@ -579,51 +574,51 @@ public class MainClient {
 				{
 					//Calculating where the ball will go after being hit off
 					//the paddle, same as in brick breaker
-					ball.dX = -ball.dX;
-					ball.dY = ((P1Y - (20 / 2)) - (bY + 10)) / 10;  //This part is confusing too!!!!
+					ball.setdX(-ball.getdX());
+					ball.setdY(((P1Y - (20 / 2)) - (bY + 10)) / 10);  //This part is confusing too!!!!
 				}
 				if(hitPlayersTwosPaddle)
 				{
 					//Calculating where the ball will go after being hit off
 					//the paddle, same as in brick breaker
-					ball.dX = -ball.dX;
-					ball.dY = ((p2Y - (20 / 2)) - (bY + 10)) / 10;
+					ball.setdX(-ball.getdX());
+					ball.setdY(((p2Y - (20 / 2)) - (bY + 10)) / 10);
 				}
-				if(ballX > Display.getWidth()) //Scored on LEFT side of screen
+				if(ball.getX() > Display.getWidth()) //Scored on LEFT side of screen
 				{
 					score0 ++;
 					if(score0 == 21){
-						ballX = Display.getWidth() / 2;
-						ballY = (int) (Display.getHeight() * 0.25);
+						ball.setX(Display.getWidth() / 2);
+						ball.setY((int) (Display.getHeight() * 0.25));
 					}else{
-						ballX = Display.getWidth() / 2;
-						ballY = Display.getHeight() / 2;
+						ball.setX(Display.getWidth() / 2);
+						ball.setY(Display.getHeight() / 2);
 					}
-					ball.dX = 5;
-					ball.dY = 0;
+					ball.setdX(5);
+					ball.setdY(0);
 					
 				}
-				if(ballX < 0) //Scored on RIGHT side of screen
+				if(ball.getX() < 0) //Scored on RIGHT side of screen
 				{
 					score1 ++;
 					if(score1 == 21){
-						ballX = Display.getWidth() / 2;
-						ballY = (int) (Display.getHeight() * 0.25);
+						ball.setX(Display.getWidth() / 2);
+						ball.setY((int) (Display.getHeight() * 0.25));
 					}else{
-						ballX = Display.getWidth() / 2;
-						ballY = Display.getHeight() / 2;
+						ball.setX(Display.getWidth() / 2);
+						ball.setY(Display.getHeight() / 2);
 					}
-					ball.dX = 5;
-					ball.dY = 0;
+					ball.setdX(5);
+					ball.setdY(0);
 				}
-				if(ballY < 0){ //Bounce off ceiling
-					ballY = 1;
-					ball.dY = -ball.dY;
+				if(ball.getY() < 0){ //Bounce off ceiling
+					ball.getY();
+					ball.setdY(-ball.getdY());
 				}
-				if(ballY > Display.getHeight()) //Bounce off floor
+				if(ball.getY() > Display.getHeight()) //Bounce off floor
 				{
-					ballY = Display.getHeight() - 1;
-					ball.dY = -ball.dY;
+					ball.setY(Display.getHeight() - 1);
+					ball.setdY(-ball.getdY());
 				}
 				try {
 					Thread.sleep(20);
