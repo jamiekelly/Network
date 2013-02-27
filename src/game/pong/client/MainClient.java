@@ -42,29 +42,21 @@ public class MainClient {
 	static boolean applet = false;
 	static boolean isPaused = false;
 	
-	//Checking which player pa
 	static boolean isPlayer1Paused = false;
 	static boolean isPlayer2Paused = false;
+	static int isSinglePlayer;
+	static int difficulty;
 	
-	//String set to empty for the starter, because it's going to be 
-	//drawn on screen the whole time, if it's blank, then nothing will be there :)
 	static String whoPausedTheGame = "";
-	static int playerNum = 0;
+	static int playerNum;
 	
 	static int score0 = 0;
-	static int score1 = 0;
+	static int score1 = 20;
 	
-	static int x = 0;
-	static int y;
+	static int P1X = 0;
+	static int P1Y;
 	static int p2X;
 	static int p2Y;
-	
-	static int x2 = 0;
-	static int y2 = 0;
-	static int x3 = 0;
-	static int y3 = 0;
-	static int x4 = 0;
-	static int y4 = 0;
 	
 	static Ball ball = new Ball();
 	static int ballX;
@@ -78,27 +70,28 @@ public class MainClient {
 	public static Socket socket;
 
 	
-	
+	public static void main(String []args)
+	{
+		new MainClient();
+	}
+
 	public MainClient()
 	{
 		if(!applet)
 		{
 			try
 			{
-			
 				Display.setDisplayMode(new DisplayMode(600, 400));
-				Display.setTitle("Two player pong! Over the Internet!");//Isn't
-				Display.create();//isn't
-				Display.setResizable(false);//isn't
+				Display.setTitle("Two player pong! Over the Internet!");
+				Display.create();
+				Display.setResizable(false);
 			
-			}catch(LWJGLException e)
-			{
-				e.printStackTrace();
 			}
+			catch(LWJGLException e){e.printStackTrace();}
 		}
 		
 		/*The 30 will need to be changed if paddle heights are modified*/
-		y = (Display.getHeight()/2) - 30; 
+		P1Y = (Display.getHeight()/2) - 30; 
 		p2Y = (Display.getHeight()/2) - 30;
 		p2X = (Display.getWidth() - 20);
 		
@@ -114,65 +107,95 @@ public class MainClient {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
-		String isServer = (String) JOptionPane.showInputDialog(null, "Is server? (yes/no): ", "Do it", JOptionPane.INFORMATION_MESSAGE);
-		if(isServer.toLowerCase().equals("yes")){
+		String options[] = {"Yes","no"};
+		
+		isSinglePlayer = (Integer) JOptionPane.showOptionDialog(null, "Do you want to play single Player?", 
+																		"Single Player?",
+																		JOptionPane.DEFAULT_OPTION, 
+																		JOptionPane.INFORMATION_MESSAGE,
+																		null, options, options[0]);
+		if(isSinglePlayer == 0)
+		{
 			playerNum = 0;
+			String difficulties[] = {"Easy", "Medium", "Hard!", "IMPOSSIBLE! (Seriously!)"};
+			difficulty = (Integer) JOptionPane.showOptionDialog(null, "What difficulty would you like to play at?", 
+																"difficulty?",
+																JOptionPane.DEFAULT_OPTION, 
+																JOptionPane.INFORMATION_MESSAGE,
+																null, difficulties, difficulties[1]);
 			
-			try {
-				
-				ip = InetAddress.getLocalHost().getHostAddress() + ":" + port;
-				server = new ServerSocket(port, 0, InetAddress.getLocalHost());
-				new Thread(accept).start();
-				
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			new Thread(accept).start();
+		}
+		else
+		{
+			int isServer = (Integer) JOptionPane.showOptionDialog(null, "Will you host the server?", 
+																	"Host the server?", 
+																	JOptionPane.DEFAULT_OPTION, 
+																	JOptionPane.INFORMATION_MESSAGE,
+																	null, options, options[0]);
+			if(isServer == 0)
+			{
+				playerNum = 0;
+				try 
+				{
+					ip = InetAddress.getLocalHost().getHostAddress() + ":" + port;
+					server = new ServerSocket(port, 0, InetAddress.getLocalHost());
+					new Thread(accept).start();
+				}
+				catch (UnknownHostException e) {e.printStackTrace();}
+				catch (IOException e) {e.printStackTrace();}
 			}
-			
-			
-		}else{
-			playerNum = 1;
-		String local;
-		try
-		{
-			local = InetAddress.getLocalHost().getHostAddress() + ":" + port;
+			else
+			{
+				playerNum = 1;
+				String local;
+				try
+				{
+					local = InetAddress.getLocalHost().getHostAddress() + ":" + port;
+				}
+				catch (UnknownHostException ex)
+				{
+					local = "Network Error";
+				}
+				
+				ip = (String) JOptionPane.showInputDialog(null, "IP: ", "Info", JOptionPane.INFORMATION_MESSAGE, null, null, local);
+				port = Integer.parseInt(ip.substring(ip.indexOf(":") + 1));
+				ip = ip.substring(0, ip.indexOf(":"));
+				
+				try {
+					socket = new Socket(ip, port);
+				} 
+				catch (UnknownHostException e) 
+				{
+					e.printStackTrace();
+					System.out.println("Connection Failed!");
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+					System.out.println("Connection Failed!");
+				}
+				
+				ObjectInputStream ois;
+				try {
+						ois = new ObjectInputStream(socket.getInputStream());
+						JOptionPane.showMessageDialog(null, (String) ois.readObject());
+				} 
+				catch (Exception e) {e.printStackTrace();}
+				new Thread(receive).start();
+				new Thread(send).start();
+			}
 		}
-		catch (UnknownHostException ex)
-		{
-			local = "Network Error";
-		}
-		ip = (String) JOptionPane.showInputDialog(null, "IP: ", "Info", JOptionPane.INFORMATION_MESSAGE, null, null, local);
 		
-		port = Integer.parseInt(ip.substring(ip.indexOf(":") + 1));
-		ip = ip.substring(0, ip.indexOf(":"));
 		
-		try {
-			socket = new Socket(ip, port);
-		} catch (UnknownHostException e) {
-			
-			e.printStackTrace();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		ObjectInputStream ois;
-		try {
-				ois = new ObjectInputStream(socket.getInputStream());
-				JOptionPane.showMessageDialog(null, (String) ois.readObject());
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-		new Thread(receive).start();
-		new Thread(send).start();
-		}
+		/*THE START OF THE GAME SCREEN*/
 		while(!Display.isCloseRequested())
 		{
 			ball.x = ballX;
 			ball.y = ballY;
 			glClear(GL_COLOR_BUFFER_BIT);
+			
+			
 			
 			/* Controls */
 			//This should have been in the while loop, so ESCAPE isn't registered
@@ -183,45 +206,101 @@ public class MainClient {
 				{
 					if(Keyboard.isKeyDown(Keyboard.KEY_P))
 					{
-						if(playerNum == 0){
+						if(playerNum == 0)
+						{
 							if(isPlayer1Paused == false){
 								isPlayer1Paused = true;
-							}else if(isPlayer1Paused == true){
+							}
+							else if(isPlayer1Paused == true){
 								isPlayer1Paused = false;
 							}
 						}
-						if(playerNum == 1){
+						if(playerNum == 1)
+						{
 							if(isPlayer2Paused == false){
 								isPlayer2Paused = true;
-							}else if(isPlayer2Paused == true){
-								isPlayer2Paused = false;
 							}
+							else if(isPlayer2Paused == true){
+								isPlayer2Paused = false;
+							}  //Changed from == false because I think it seems nicer like this. Don't know why
 						}
 					}
 				}
 			}
-			//Changed from == false because I think it seems nicer like this. Don't know why
 			
-			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddle
+			if(!isPlayer1Paused && !isPlayer2Paused)
 			{
-				if(y > 0)
+				if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddles
 				{
-					if(playerNum == 0 && !isPlayer1Paused){
-						y -= 5;
-					}else if(playerNum == 1 && !isPlayer2Paused){
-						p2Y -= 5;
+					if(P1Y > 0)
+					{
+						if(playerNum == 0 && !isPlayer1Paused){
+							P1Y -= 5;
+						}else if(playerNum == 1 && !isPlayer2Paused){
+							p2Y -= 5;
+						}
 					}
-					
+				}
+				if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+				{
+					if(P1Y + 60 < Display.getHeight())
+					{
+						if(playerNum == 0 && !isPlayer1Paused){
+							P1Y += 5;
+						}else if(playerNum == 1 && !isPlayer2Paused){
+							p2Y += 5;
+						}
+					}
 				}
 			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+			
+			/*AI MOVEMENT*/
+			
+			/*Difficultly Chart is as follows
+			 * Easy = 0
+			 * Medium = 1
+			 * Hard = 2
+			 * Impossible = 3
+			 * */
+			if(!isPlayer1Paused)
 			{
-				if(y + 60 < Display.getHeight())
+				if(isSinglePlayer == 0)
 				{
-					if(playerNum == 0 && !isPlayer1Paused){
-						y += 5;
-					}else if(playerNum == 1 && !isPlayer2Paused){
-						p2Y += 5;
+					if(p2Y > 0)
+					{
+						if(ball.y < p2Y + 30)
+						{
+							if(difficulty == 0){
+								p2Y -= 1.5;
+							}
+							if(difficulty == 1){
+								p2Y -= 2.5;
+							}
+							if(difficulty == 2){
+								p2Y -= 4;
+							}
+							if(difficulty == 3){
+								p2Y = ball.y - 30;
+							}
+						}
+					}
+					if(p2Y + 60 < Display.getHeight())
+					{
+						if(ball.y > p2Y + 30)
+						{
+							if(difficulty == 0){
+								p2Y += 1.5;
+							}
+							if(difficulty == 1){
+								p2Y += 2.8;
+							}
+							if(difficulty == 2){
+								p2Y += 4;
+							}
+							if(difficulty == 3){
+								p2Y = ball.y - 30;
+							}
+						}
 					}
 				}
 			}
@@ -232,10 +311,28 @@ public class MainClient {
 			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1);
 			
 			//Drawing the Who paused the game text :p
-			//Setting text color to Cyan
-			glColor3f(0, 1, 1);
-			Fonts.drawString(whoPausedTheGame, 0, Display.getHeight() / 2,  5);
-			//Setting color back to white
+			Fonts.drawString(whoPausedTheGame, Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5);
+			
+			/*Text if someone won the game!*/
+			String playerWon[] = {"Player One won the game!", "PLayer Two won the game!"};
+			
+			if(score0!=21){
+				Fonts.drawString("", Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5);
+			}
+			else if(score1!=21){
+				Fonts.drawString("", Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5);
+			}
+			
+			if(score0>=21)
+			{
+				Fonts.drawString(playerWon[0], Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5);
+			}
+			else if(score1>=21)
+			{
+				Fonts.drawString(playerWon[1], Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5);
+			}
+			
+			//Setting color after to white
 			glColor3f(1, 1, 1);
 			/*
 			 * 1.......2
@@ -245,12 +342,11 @@ public class MainClient {
 			 * 4.......3
 			 */
 			
-			
 			glBegin(GL_QUADS);  // Player 0 paddle, Left paddle
-				glVertex2i(x , y);	//1
-				glVertex2i(x + 20 , y);	//2
-				glVertex2i(x + 20, y + 60);	//3
-				glVertex2i(x , y + 60);	//4
+				glVertex2i(P1X , P1Y);	//1
+				glVertex2i(P1X + 20 , P1Y);	//2
+				glVertex2i(P1X + 20, P1Y + 60);	//3
+				glVertex2i(P1X , P1Y + 60);	//4
 			glEnd();
 			
 			glBegin(GL_QUADS);  // Player 1 paddle, Right paddle
@@ -267,51 +363,70 @@ public class MainClient {
 				glVertex2i(ballX + 20, ballY + 20); //3
 				glVertex2i(ballX, ballY + 20); //4
 			glEnd();
+			
 			//Here we draw the text on who paused the screen! :p
-			if(isPaused){
-				if(playerNum == 0){
-					if(isPlayer1Paused || isPlayer2Paused){
+			if(isPaused)
+			{
+				if(playerNum == 0)
+				{
+					if(isPlayer1Paused && isPlayer2Paused)
+					{
+						whoPausedTheGame = "Both players paused the game";
+					}
+					else if(isPlayer1Paused || isPlayer2Paused)
+					{
 						if(isPlayer1Paused){
 							whoPausedTheGame = "Player one paused the game";
-						}else if(isPlayer2Paused){
+						}
+						else if(isPlayer2Paused){
 							whoPausedTheGame = "Player two paused the game";
 						}
 					}
-				}else if(playerNum == 1){
-					if(!isPlayer2Paused){
+				}
+				else if(playerNum == 1)
+				{
+					if(isPlayer1Paused && isPlayer2Paused){
+						whoPausedTheGame = "Both players paused the game";
+					}
+					else if(!isPlayer2Paused){
 						whoPausedTheGame = "Player one paused the game!";
-					}else if(isPlayer2Paused){
+					}
+					else if(isPlayer2Paused){
 						whoPausedTheGame = "Player two paused the game!";
 					}
 				}
-			}else{
-				//Setting the variable to blank so no text is rendered
-				whoPausedTheGame = "";
+			}
+			else
+			{
+				whoPausedTheGame = ""; //Setting the variable to blank so no text is rendered
 			}
 			Display.sync(60);
 			Display.update();
-			
 		}
 	}
 	
-	public static void main(String []args)
-	{
-		new MainClient();
-	}
 	private static Runnable accept = new Runnable()
 	{
 		public void run()
 		{
 			try
 			{
-				socket = server.accept();
 				
-				ObjectOutputStream oos;
-				oos = new ObjectOutputStream(socket.getOutputStream());
-				oos.writeObject("Welcome to the server!");
 				
-				new Thread(send).start();
-				new Thread(receive).start();
+				if(isSinglePlayer!=0)
+				{
+					
+					socket = server.accept();
+					ObjectOutputStream oos;
+					
+					oos = new ObjectOutputStream(socket.getOutputStream());
+					oos.writeObject("Welcome to the game!  You will be player two! (Left)");
+					new Thread(send).start();
+					new Thread(receive).start();
+				}else{
+					socket = null;
+				}
+				
 				new Thread(onUpdate).start();
 			}
 			catch(Exception e)
@@ -329,18 +444,22 @@ public class MainClient {
 			{
 				try
 				{
-					
-					if(playerNum == 0){
+					if(playerNum == 0)
+					{
 						ois = new ObjectInputStream(socket.getInputStream());
 						p2Y = (Integer) ois.readObject();
+						
 						ois = new ObjectInputStream(socket.getInputStream());
 						isPlayer2Paused = (Boolean) ois.readObject();
 					}
-					if(playerNum == 1){
+					else if(playerNum == 1)
+					{	
 						ois = new ObjectInputStream(socket.getInputStream());
-						y = (Integer) ois.readObject();
+						P1Y = (Integer) ois.readObject();
+						
 						ois = new ObjectInputStream(socket.getInputStream());
 						Ball b = (Ball) ois.readObject();
+						
 						ballX = b.x;
 						ballY = b.y;
 						
@@ -352,6 +471,7 @@ public class MainClient {
 						
 						ois = new ObjectInputStream(socket.getInputStream());
 						isPaused = (Boolean) ois.readObject();
+						
 					}
 				Thread.sleep(10);
 				}catch(Exception e){
@@ -364,134 +484,153 @@ public class MainClient {
 	{
 		public void run()
 		{
-		//Get the previous location of x
-		ObjectOutputStream oos;
-		while(true){
-					try
-					{
+			//Get the previous location of x
+			ObjectOutputStream oos;
+			while(true)
+			{
+				try
+				{
+					oos = new ObjectOutputStream(socket.getOutputStream());
+					if(playerNum == 0){
+						oos.writeObject(P1Y);
 						oos = new ObjectOutputStream(socket.getOutputStream());
-						if(playerNum == 0){
-							oos.writeObject(y);
-							oos = new ObjectOutputStream(socket.getOutputStream());
-							oos.writeObject(ball);
-							
-							oos = new ObjectOutputStream(socket.getOutputStream());
-							oos.writeObject(score0);
-							
-							oos = new ObjectOutputStream(socket.getOutputStream());
-							oos.writeObject(score1);
-							
-							//Sending player 2 if game is paused, only sending one
-							//variable and not two because if the game is paused
-							//and player one didn't pause it, then obviously it was
-							//player two that paused it.
-							//I did it like this because otherwise it was throwing errors
-							//and I didn't like that! :)
-							oos = new ObjectOutputStream(socket.getOutputStream());
-							oos.writeObject(isPaused);
-						}
-						if(playerNum == 1){
-							oos.writeObject(p2Y);
-							oos = new ObjectOutputStream(socket.getOutputStream());
-							oos.writeObject(isPlayer2Paused);
-						}
-						Thread.sleep(20);
-					}catch(Exception e){}
+						oos.writeObject(ball);
+						
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(score0);
+						
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(score1);
+						
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(isPaused);
+					}
+					else if(playerNum == 1){							
+						oos.writeObject(p2Y);
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(isPlayer2Paused);
+					}
+					Thread.sleep(20);
+				}catch(Exception e){}
 			}
 		}
 	};
-	private static Runnable onUpdate = new Runnable(){
+	private static Runnable onUpdate = new Runnable()
+	{
 		public void run() 
 		{
-			while(true){
-				
-				/*
-				 * Here I'm gonig to check if either one of the players are paused
-				 * naturally, if they are the global isPaused variable is going
-				 * to be set. this will just stop the ball and will not stop the
-				 * players from moving
-				 * 
-				 * The variables isPlayer1Paused and isPlayer2Paused are going to both
-				 * act as checks for the main isPaused variable and for the movement 
-				 * keys, regarding to which playerNum you have been assigned :)
-				 */
+			while(true)
+			{
+				System.out.println("Test");
 				if(isPlayer1Paused || isPlayer2Paused){
 					isPaused = true;
 				}else{
 					isPaused = false;
 				}
-					if(true){
-						if(!isPaused){
-							if(ball.dX > 0){
-								ball.dX += 0.2;
-							}else{
-								ball.dX -= 0.2;
-							}
-							ballX -= ball.dX;
-							ballY -= ball.dY;
-						}
-						int bX = ballX + 10;
-						int bY = ballY + 10;
-						
-						//Checking collision for the two player paddles if the
-						//ball is colliding with the paddle
-						boolean one = bX >= x && bX <= x + 20 && bY >= y && bY <= y + 60;
-						boolean two = bX >= p2X && bX <= p2X + 20 && bY >= p2Y && bY <= p2Y + 60;
-						if(one){
-							ball.dX = -ball.dX;
-							//Calculating where the ball will go after being hit off
-							//the paddle, same as in brick breaker
-							ball.dY = ((y + (20 / 2)) - (bY + 10)) / 10;
-						}
-						if(two){
-							ball.dX = -ball.dX;
-							//Calculating where the ball will go after being hit off
-							//the paddle, same as in brick breaker
-							ball.dY = ((p2Y + (20 / 2)) - (bY + 10)) / 10;
-						}
-						if(ballX > Display.getWidth()){
-							score0 ++;
-							ball.dX = 5;
-							ball.dY = 0;
-							ballX = Display.getWidth() / 2;
-							ballY = Display.getHeight() / 2;
-						}
-						if(ballX < 0){
-							score1 ++;
-							ball.dX = 5;
-							ball.dY = 0;
-							ballX = Display.getWidth() / 2;
-							ballY = Display.getHeight() / 2;
-						}
-						if(ballY < 0){
-							ballY = 1;
-							ball.dY = -ball.dY;
-						}
-						if(ballY > Display.getHeight()){
-							ballY = Display.getHeight() - 1;
-							ball.dY = -ball.dY;
-						}
-							/*
-							 * That's actually a good idea, how about a count down
-							 * like when the ball is reset then it will spawn back in
-							 * like 2 seconds or something? or the player who scored
-							 * gets to start it?
-							 * -Rob
-							 * 
-							 * 
-							 * IT'S A VERY GOOD IDEA!!!!
-							 * DO THAT!!
-							 * -Tim
-							 */
-							//TODO ^^^^^^^
-						try {
-							Thread.sleep(20);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
+				//((score0 < 21) || (score1 < 21)) && ! ((score0 < 21) && (score1 < 21)) 
+				//Below says ('!isPaused' XOR ('score0 < 21' XOR 'score1 < 21')) so one AND ONLY one of the three statement can be true.
+				if((score0 < 21) && (score1 < 21))
+				{
+					if(!isPaused)
+					{
+						/*SIDE-NOTE:
+						 * If you set an int equal to say 5.5, like the two lines below, the code truncates the .5
+						 * So these two lines aren't doing anything UNLESS 'ball.dX' is a float so it doesn't truncate the decimal.
+						 * Since int (5 + .5) = 5.5 --> int 5.5 == int 5
+						 * 
+						 * I fixed the problem by changing 'ball.dX' to a float.
+						 * DELETE THESE COMMENTS WHEN YOU'RE DONE BY THE WAY!
+						 * */
+						if(ball.dX > 0){
+							ball.dX += .002;
+						}else{
+							ball.dX -= .002;
+						}//WTF is this part below???
+						ballX -= ball.dX;
+						ballY -= ball.dY;
+					}//^^^^^^^^^^^^^^^^^^^^^^^
 				}
-			
+				
+				int bX = ballX + 10;
+				int bY = ballY + 10;
+				
+				//TODO fix the bounce off the paddle since it's really screwed up!!
+				/*
+				 * What hell is...
+				 * 
+				 * ballX >>
+				 * BallY >>
+				 * bX >>
+				 * bY >>
+				 * ball.dX >>
+				 * ball.dY  >>
+				 * 
+				 * Explain all these for me, in one sentence!
+				 * I've been trying to fix the bounce off of the paddles but I think you should since you wrote this part.
+				 * I understand most of it but once I get into the part above I get really screwed up.
+				 * */
+				
+				//Checking collision for the two player paddles if the
+				//ball is colliding with the paddle
+				boolean hitPlayerOnesPaddle = bX >= P1X && bX <= P1X + 20 && bY >= P1Y && bY <= P1Y + 60;
+				boolean hitPlayersTwosPaddle = bX >= p2X && bX <= p2X + 20 && bY >= p2Y && bY <= p2Y + 60;
+				
+				if(hitPlayerOnesPaddle)
+				{
+					//Calculating where the ball will go after being hit off
+					//the paddle, same as in brick breaker
+					ball.dX = -ball.dX;
+					ball.dY = ((P1Y - (20 / 2)) - (bY + 10)) / 10;  //This part is confusing too!!!!
+				}
+				if(hitPlayersTwosPaddle)
+				{
+					//Calculating where the ball will go after being hit off
+					//the paddle, same as in brick breaker
+					ball.dX = -ball.dX;
+					ball.dY = ((p2Y - (20 / 2)) - (bY + 10)) / 10;
+				}
+				if(ballX > Display.getWidth()) //Scored on LEFT side of screen
+				{
+					score0 ++;
+					if(score0 == 21){
+						ballX = Display.getWidth() / 2;
+						ballY = (int) (Display.getHeight() * 0.25);
+					}else{
+						ballX = Display.getWidth() / 2;
+						ballY = Display.getHeight() / 2;
+					}
+					ball.dX = 5;
+					ball.dY = 0;
+					
+				}
+				if(ballX < 0) //Scored on RIGHT side of screen
+				{
+					score1 ++;
+					if(score1 == 21){
+						ballX = Display.getWidth() / 2;
+						ballY = (int) (Display.getHeight() * 0.25);
+					}else{
+						ballX = Display.getWidth() / 2;
+						ballY = Display.getHeight() / 2;
+					}
+					ball.dX = 5;
+					ball.dY = 0;
+				}
+				if(ballY < 0){ //Bounce off ceiling
+					ballY = 1;
+					ball.dY = -ball.dY;
+				}
+				if(ballY > Display.getHeight()) //Bounce off floor
+				{
+					ballY = Display.getHeight() - 1;
+					ball.dY = -ball.dY;
+				}
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	};
 }
