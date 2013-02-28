@@ -12,7 +12,7 @@ If I put a '*' at the beginning of a line it means it's new so look at it and de
 - Add Dynamic GUI. By this I mean GUI that is possible to be added anywhere with one, or two lines of code and no hassle
 *- Finish & implement the paddle class.
 
--=Priority #2 [Do soon!]=-
+<h1>-=Priority #2 [Do soon!]=- </h1>
 
 - Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished
 - Draw font so it's possible to write things on screen (most likely draw with a stylesheet and then load from that
