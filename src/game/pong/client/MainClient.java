@@ -43,7 +43,6 @@ public class MainClient {
 
 	static boolean applet = false;
 	private static boolean isPaused = false;
-	//private volatile boolean isGameStoped = false;TODO
 	
 	private static boolean isPlayer1Paused = false;
 	private static boolean isPlayer2Paused = false;
@@ -87,7 +86,7 @@ public class MainClient {
 			try
 			{
 				Display.setDisplayMode(new DisplayMode(600, 400));
-				Display.setTitle("Two player pong! Over the Internet!");
+				Display.setTitle("PONG!");
 				Display.create();
 				Display.setResizable(false);
 			
@@ -99,6 +98,8 @@ public class MainClient {
 		P1Y = (Display.getHeight()/2) - 30; 
 		p2Y = (Display.getHeight()/2) - 30;
 		p2X = (Display.getWidth() - 20);
+		ball.setX(Display.getWidth()/2);
+		ball.setY(Display.getHeight()/2);
 		
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
@@ -421,9 +422,6 @@ public class MainClient {
 			Display.sync(60);
 			Display.update();
 		}
-		//If is out of the while loop, System.exit(0) will pretty much
-		//kill the process and Display.destroy destroys the screen being drawn
-		//It also stops the server and such
 		Display.destroy();
 		System.exit(0);
 	}
@@ -547,13 +545,8 @@ public class MainClient {
 				}else{
 					isPaused = false;
 				}
-				//((score0 < 21) || (score1 < 21)) && ! ((score0 < 21) && (score1 < 21)) 
-				//Below says ('!isPaused' XOR ('score0 < 21' XOR 'score1 < 21')) so one AND ONLY one of the three statement can be true.
 				if(!isPaused && ((score0 < 21) && (score1 < 21)))
 				{
-					//Previously I had been the things set to be doubles, but something
-					//happened and I had to revert to Ints I believe, dX and dY should have
-					//still been doubles
 					if(ball.getdX() > 0){
 						ball.setdX((float) (ball.getdX() + .002));
 					}else{
@@ -565,68 +558,34 @@ public class MainClient {
 					ball.setY((int) (ball.getY()-ball.getdY()));
 				}
 				
-				int bX = ball.getX() + 10;
-				int bY = ball.getY() + 10;
-				
-				//TODO fix the bounce off the paddle since it's really screwed up!!
 				/*
-				 * What hell is...
-				 * 
-				 * ball.getX() >>
-				 * ball.getY() >>
-				 * bX >>
-				 * bY >>
-				 * ball.dX >>
-				 * ball.dY  >>
-				 * 
-				 * Explain all these for me, in one sentence!
-				 * I've been trying to fix the bounce off of the paddles but I think you should since you wrote this part.
-				 * I understand most of it but once I get into the part above I get really screwed up.
-				 * */
+				>>>>NOTE<<< TODO 
+				ball.getcenterOfBallX() = ball.getcenterOfBallX();
+				ball.getCenterOfBallY(); =  ball.getCenterOfBallY();  DELETE AFTER READING*/
 				
 				//Checking collision for the two player paddles if the
 				//ball is colliding with the paddle
-				boolean hitPlayerOnesPaddle = bX >= P1X && bX <= P1X + 20 && bY >= P1Y && bY <= P1Y + 60;
-				boolean hitPlayersTwosPaddle = bX >= p2X && bX <= p2X + 20 && bY >= p2Y && bY <= p2Y + 60;
+				boolean hitPlayerOnesPaddle = ball.getCenterOfBallX() >= P1X && ball.getCenterOfBallX() <= P1X + 20 && ball.getCenterOfBallY() >= P1Y && ball.getCenterOfBallY() <= P1Y + 60;
+				boolean hitPlayersTwosPaddle = ball.getCenterOfBallX() >= p2X && ball.getCenterOfBallX() <= p2X + 20 && ball.getCenterOfBallY() >= p2Y && ball.getCenterOfBallY() <= p2Y + 60;
 				
 				if(hitPlayerOnesPaddle)
 				{
 					//Calculating where the ball will go after being hit off
 					//the paddle, same as in brick breaker
 					ball.setdX(-ball.getdX());
-					ball.setdY(((P1Y - (20 / 2)) - (bY + 10)) / 10);  //This part is confusing too!!!!
-					/*
-					 * Right, so what I did there was I set the dY according to where the 
-					 * ball was when the ball hit the paddle.
-					 * 
-					 * So the point of where I am calculating is from the middle
-					 * of the both objects, so middle of ball x and ball y, and the
-					 * paddle x and the paddle y. 
-					 * 
-					 * If you imagine that px = the centre of the paddle (
-					 * 									For this we will say that paddle's
-					 * 									x coordinate is 70 and y is 200
-					 * 									Paddle width is 20 and paddle height is 60
-					 * 									so the X coords would be x + (width / 2)
-					 * 									and the Y coord would be y - (height / 2)
-					 * 
-					 * 	So when the ball hits the paddle, the dY is calculated by seeing
-					 * where exactly the paddle is being hit, if above the centre, the ball's dY is going
-					 * to be added, and if it's hitting below the center, it will be subtracted. Depending 
-					 * on how far away the paddle was hit from the centre this will say how large the 
-					 * dY will be
-					 */
+					ball.setdY((float) (((P1Y+30)-ball.getCenterOfBallY())/7.5));
 				}
 				if(hitPlayersTwosPaddle)
 				{
 					//Calculating where the ball will go after being hit off
 					//the paddle, same as in brick breaker
 					ball.setdX(-ball.getdX());
-					ball.setdY(((p2Y - (20 / 2)) - (bY + 10)) / 10);
+					ball.setdY((float) (((p2Y+30)-ball.getCenterOfBallY())/7.5));
+					//ball.setdY(p2Y )
 				}
-				if(ball.getX() > Display.getWidth()) //Scored on LEFT side of screen
+				if(ball.getCenterOfBallX() > Display.getWidth()) //Scored on RIGHT side of screen
 				{
-					score0 ++;
+					score0++;
 					if(score0 == 21){
 						ball.setX(Display.getWidth() / 2);
 						ball.setY((int) (Display.getHeight() * 0.25));
@@ -638,7 +597,7 @@ public class MainClient {
 					ball.setdY(0);
 					
 				}
-				if(ball.getX() < 0) //Scored on RIGHT side of screen
+				if(ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
 				{
 					score1 ++;
 					if(score1 == 21){
