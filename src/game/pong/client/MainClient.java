@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -76,7 +76,7 @@ public class MainClient {
 		new MainClient();
 	}
 
-	public MainClient()
+	private MainClient()
 	{
 		if(!applet)
 		{
@@ -97,6 +97,7 @@ public class MainClient {
 		p2X = (Display.getWidth() - 20);
 		ball.setX(Display.getWidth()/2);
 		ball.setY(Display.getHeight()/2);
+		BallFollower.createFollowers();
 		
 		glEnable(GL_TEXTURE_2D);
 		glMatrixMode(GL_PROJECTION);
@@ -107,7 +108,7 @@ public class MainClient {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
-		String options[] = {"Yes","no"};
+		String options[] = {"Yes","No"};
 		
 		isSinglePlayer = (Integer) JOptionPane.showOptionDialog(null, "Do you want to play single Player?", 
 																		"Single Player?",
@@ -124,7 +125,7 @@ public class MainClient {
 																JOptionPane.INFORMATION_MESSAGE,
 																null, difficulties, difficulties[1]);
 			
-			new Thread(accept).start();
+			new Thread(onUpdate).start();
 		}
 		else
 		{
@@ -187,9 +188,7 @@ public class MainClient {
 			}
 		}
 		
-		BallFollower.createFollowers();
-		
-		int test = 0;
+		//int test = 0; TODO commented code to get rid of warning
 		/*THE START OF THE GAME SCREEN*/
 		while(!Display.isCloseRequested())
 		{
@@ -197,11 +196,7 @@ public class MainClient {
 			ball.setY(ball.getY());
 			glClear(GL_COLOR_BUFFER_BIT);
 			
-			
-			
 			/* Controls */
-			//This should have been in the while loop, so ESCAPE isn't registered
-			//more than one time at a time, so it's like a toggle switch
 			while(Keyboard.next())
 			{
 				if(Keyboard.getEventKeyState())
@@ -359,7 +354,7 @@ public class MainClient {
 			glEnd();
 			//This has to be upside down otherwise they would all be in the same location
 			//So every tick the location is updated
-			//Finally draws all of the balls fallowing :p
+			//Finally draws all of the balls following  :p
 			glColor3f(1, 0, 0);
 			BallFollower.onUpdate();
 			glColor3f(1, 1, 1);
@@ -420,20 +415,14 @@ public class MainClient {
 		{
 			try
 			{
-				if(isSinglePlayer!=0)
-				{
-					
-					socket = server.accept();
-					ObjectOutputStream oos;
-					
-					oos = new ObjectOutputStream(socket.getOutputStream());
-					oos.writeObject("Welcome to the game!  You will be player two! (Left)");
-					new Thread(send).start();
-					new Thread(receive).start();
-				}else{
-					socket = null;
-				}
+				socket = server.accept();
+				ObjectOutputStream oos;
 				
+				oos = new ObjectOutputStream(socket.getOutputStream());
+				oos.writeObject("Welcome to the game!  You will be player two! (Left)");
+				new Thread(send).start();
+				new Thread(receive).start();
+				socket = null;
 				new Thread(onUpdate).start();
 			}
 			catch(Exception e)
