@@ -1,6 +1,7 @@
 package game.pong.client;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2i;
@@ -18,6 +19,10 @@ public class Ball implements Serializable{
 	private int centerOfBallX;
 	private int centerOfBallY;
 	
+	public Ball(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
 	
 	public int getX() {  //Getter for ball.X
 		return x;
@@ -65,11 +70,25 @@ public class Ball implements Serializable{
 	}
 	
 	public void draw(){
-		glBegin(GL_QUADS);//ball.getY() thingy
+		//Drawing a square with lines!
+		glBegin(GL_LINES);//1 to 2
 			glVertex2i(x, y); //1
 			glVertex2i(x + 20, y); //2
+		glEnd();
+		
+		glBegin(GL_LINES);//2 to 3
+			glVertex2i(x + 20, y); //2
 			glVertex2i(x + 20, y + 20); //3
+		glEnd();
+		
+		glBegin(GL_LINES);//3 to 4
+			glVertex2i(x + 20, y + 20); //3
+			glVertex2i(x , y + 20); //4
+		glEnd();
+		
+		glBegin(GL_LINES);//4 to 1
 			glVertex2i(x, y + 20); //4
+			glVertex2i(x, y); //1
 		glEnd();
 	}
 }

@@ -61,10 +61,7 @@ public class MainClient {
 	private static int p2X;
 	private static int p2Y;
 	
-	private static Ball ball = new Ball();
-	
-	//Array List for the following ball
-	public static ArrayList<Ball> ballFollower = new ArrayList<Ball>();
+	static Ball ball = new Ball(0,0);
 	
 	public static ServerSocket server;
 	
@@ -190,10 +187,9 @@ public class MainClient {
 			}
 		}
 		
-		for(int i = 0; i < 5; i++){
-			ballFollower.add(ball);
-		}
+		BallFollower.createFollowers();
 		
+		int test = 0;
 		/*THE START OF THE GAME SCREEN*/
 		while(!Display.isCloseRequested())
 		{
@@ -363,18 +359,10 @@ public class MainClient {
 			glEnd();
 			//This has to be upside down otherwise they would all be in the same location
 			//So every tick the location is updated
-			ballFollower.set(0, ball);
-			ballFollower.set(1, ballFollower.get(0));
-			ballFollower.set(2, ballFollower.get(1));
-			ballFollower.set(3, ballFollower.get(2));
-			ballFollower.set(4, ballFollower.get(3));
-			
 			//Finally draws all of the balls fallowing :p
-			for(int i = 0; i <ballFollower.size(); i++){
-				glColor3f(1,0,0);
-				ballFollower.get(i).draw();
-				glColor3f(1,1,1);
-			}
+			glColor3f(1, 0, 0);
+			BallFollower.onUpdate();
+			glColor3f(1, 1, 1);
 			//Ball
 			glBegin(GL_QUADS);//ball.getY() thingy
 				glVertex2i(ball.getX(), ball.getY()); //1
