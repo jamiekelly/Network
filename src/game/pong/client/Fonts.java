@@ -1,12 +1,19 @@
 package game.pong.client;
 
+import java.io.IOException;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glVertex2f;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glTexCoord2d;
+import static org.lwjgl.opengl.GL11.glVertex2d;
 
 //saucecode's text rendering in opengl 1.1
 //editied by kadence.
@@ -19,13 +26,56 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
  */
 
 public class Fonts {
-	public static void drawBox(int x, int y, int width, int height,int size){
-		glBegin(GL_QUADS);
-			glVertex2f(x , y - height * size);
-			glVertex2f(x + width * size, y - height * size);
-			glVertex2f(x + width * size, y);
-			glVertex2f(x , y);
-		glEnd();
+	
+	static ArrayList<Texture> fontList = new ArrayList<Texture>();
+	
+	static String alphabet[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"};
+								//"l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
+								//"y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+								//"K", "L", "M", "N", "O", "P", "Q","R", "S", "T", "U", "V",
+								//"W", "X", "Y", "Z"};
+	public static void drawCharacter(String c, double x, double y, double size){
+		for(int i = 0; i < alphabet.length; i++){
+			if(c.equals(alphabet[i])){
+				
+				fontList.get(i).bind();
+				Color activeColor = Color.magenta;
+				activeColor.bind();
+				glBegin(GL_QUADS);
+					glTexCoord2d(0, 0);
+					glVertex2d(x, y);
+					glTexCoord2d(1, 0);
+					glVertex2d(x + (8 * size), y);
+					glTexCoord2d(1, 1);
+					glVertex2d(x + (8 * size), y + (6 * size));
+					glTexCoord2d(0, 1);
+					glVertex2d(x, y + (6 * size));
+				glEnd();
+				
+				
+			}
+		}
+	}
+	//Goes through the loop and sets up all the textures(All fonts are saved similarly
+	//and according to what letter is of what number
+	static boolean texSetUp = false;
+	public static void setUpTextures(){
+		if(!texSetUp){
+			for(int i = 0; i < alphabet.length; i++){
+				fontList.add(null);
+				try {
+					fontList.set(i, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/font/a" + i + ".png"), true));
+				} catch (IOException e) {
+				}
+			}
+			texSetUp = true;
+		}
+	}
+	
+	public static void drawString(String text, int x, int y){
+		for(char c : text.toCharArray()){
+			System.out.println("LoL: " + c);
+		}
 	}
 	public static void drawString(String s, int x, int y, int size){
 		y += 7 * size;

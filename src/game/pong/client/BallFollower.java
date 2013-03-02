@@ -1,8 +1,10 @@
 package game.pong.client;
 
+import static org.lwjgl.opengl.GL11.glColor4f;
+
 public class BallFollower {
 	
-	private static int numOfFollowers = 5;
+	private static int numOfFollowers = 20;
 	private static Ball[] ballFollow = new Ball[numOfFollowers];
 	
 	@SuppressWarnings("serial")
@@ -21,12 +23,12 @@ public class BallFollower {
 			ballFollow[i] = new follow(0,0);
 		}
 	}
-	
+	static int delayCount = 0;
 	public static void onUpdate()
 	{
-		int delayCount = 0;
+		
 		delayCount++;
-		if(delayCount >= 0)
+		if(delayCount >= 3)
 		{
 			for(int i = ballFollow.length - 1; i > 0; i--)
 			{
@@ -41,9 +43,14 @@ public class BallFollower {
 	}
 	private static void draw()
 	{
+		float opacity = 1F;
 		for(int i = 0; i < ballFollow.length; i++)
 		{
+			glColor4f(1,1,1,opacity);
 			ballFollow[i].draw();
+			//Math to calculate opacity decrease rate
+			opacity -= (float)(100 / ballFollow.length) / 100;
+			glColor4f(1,1,1,1);
 		}
 	}
 }

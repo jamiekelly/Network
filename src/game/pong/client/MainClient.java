@@ -12,7 +12,6 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -33,42 +32,47 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glTexCoord2d;
 
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MainClient {
 
+	static Paddle player1 = new Paddle(0, 0);
+	static Paddle player2 = new Paddle(0, 0);
+	
 	static boolean applet = false;
-	private static boolean isPaused = false;
+	static boolean isPaused = false;
 	
-	private static boolean isPlayer1Paused = false;
-	private static boolean isPlayer2Paused = false;
+	static boolean isPlayer1Paused = false;
+	static boolean isPlayer2Paused = false;
 	
-	private static int isSinglePlayer;
-	private static int difficulty;
+	static int isSinglePlayer;
+	static int difficulty;
 	
-	private static String whoPausedTheGame = "";
-	private static int playerNum;
+	static String whoPausedTheGame = "";
+	static int playerNum;
 	
-	private static int score0 = 0;
-	private static int score1 = 0;
+	static int score0 = 0;
+	static int score1 = 0;
 	
-	private static int P1X = 0;
-	private static int P1Y;
-	private static int p2X;
-	private static int p2Y;
+	static int P1X = 0;
+	static int P1Y;
+	static int p2X;
+	static int p2Y;
 	
 	static Ball ball = new Ball(0,0);
 	
 	public static ServerSocket server;
 	
 	//TODO In applet, load parameters from here
-	private static int port = 7777;
-	private static String ip = "82.71.22.183";
-	private static Socket socket;
+	static int port = 7777;
+	static String ip = "82.71.22.183";
+	static Socket socket;
 
 	
 	public static void main(String []args)
@@ -100,13 +104,19 @@ public class MainClient {
 		BallFollower.createFollowers();
 		
 		glEnable(GL_TEXTURE_2D);
+		glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		glViewport(0,0,600,400);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(0, 600, 400, 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
-		glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		Fonts.setUpTextures();
+		
+		
 		
 		String options[] = {"Yes","No"};
 		
@@ -192,115 +202,22 @@ public class MainClient {
 		/*THE START OF THE GAME SCREEN*/
 		while(!Display.isCloseRequested())
 		{
+			glClear(GL_COLOR_BUFFER_BIT);
 			ball.setX(ball.getX());
 			ball.setY(ball.getY());
-			glClear(GL_COLOR_BUFFER_BIT);
+			player1.setX(P1X);
+			player1.setY(P1Y);
+			player2.setX(p2X);
+			player2.setY(p2Y);
+			player1.draw();
+			player2.draw();
 			
-			/* Controls */
-			while(Keyboard.next())
-			{
-				if(Keyboard.getEventKeyState())
-				{
-					if(Keyboard.isKeyDown(Keyboard.KEY_P))
-					{
-						if(playerNum == 0)
-						{
-							if(isPlayer1Paused == false){
-								isPlayer1Paused = true;
-							}
-							else if(isPlayer1Paused == true){
-								isPlayer1Paused = false;
-							}
-						}
-						if(playerNum == 1)
-						{
-							if(isPlayer2Paused == false){
-								isPlayer2Paused = true;
-							}
-							else if(isPlayer2Paused == true){
-								isPlayer2Paused = false;
-							}  //Changed from == false because I think it seems nicer like this. Don't know why
-						}
-					}
-				}
-			}
 			
-			if(!isPlayer1Paused && !isPlayer2Paused)
-			{
-				if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddles
-				{
-					if(P1Y > 0)
-					{
-						if(playerNum == 0 && !isPlayer1Paused){
-							P1Y -= 5;
-						}else if(playerNum == 1 && !isPlayer2Paused){
-							p2Y -= 5;
-						}
-					}
-				}
-				if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-				{
-					if(P1Y + 60 < Display.getHeight())
-					{
-						if(playerNum == 0 && !isPlayer1Paused){
-							P1Y += 5;
-						}else if(playerNum == 1 && !isPlayer2Paused){
-							p2Y += 5;
-						}
-					}
-				}
-			}
+			Input.onUpdate();
 			
 			/*AI MOVEMENT*/
+			AI.onUpdate(difficulty);
 			
-			/*Difficultly Chart is as follows
-			 * Easy = 0
-			 * Medium = 1
-			 * Hard = 2
-			 * Impossible = 3
-			 * */
-			if(!isPlayer1Paused)
-			{
-				if(isSinglePlayer == 0)
-				{
-					if(p2Y > 0)
-					{
-						if(ball.getY() < p2Y + 30)
-						{
-							if(difficulty == 0){
-								p2Y -= 1.5;
-							}
-							if(difficulty == 1){
-								p2Y -= 2.5;
-							}
-							if(difficulty == 2){
-								p2Y -= 4;
-							}
-							if(difficulty == 3){
-								p2Y = ball.getY() - 30;
-							}
-						}
-					}
-					if(p2Y + 60 < Display.getHeight())
-					{
-						if(ball.getY() > p2Y + 30)
-						{
-							if(difficulty == 0){
-								p2Y += 1.5;
-							}
-							if(difficulty == 1){
-								p2Y += 2.8;
-							}
-							if(difficulty == 2){
-								p2Y += 4;
-							}
-							if(difficulty == 3){
-								p2Y = ball.getY() - 30;
-							}
-						}
-					}
-				}
-			}
 			
 			/*Text at the top of the screen*/
 			Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 1);
@@ -330,7 +247,6 @@ public class MainClient {
 			}
 			
 			//Setting color after to white
-			glColor3f(1, 1, 1);
 			/*
 			 * 1.......2
 			 * .       .
@@ -339,30 +255,25 @@ public class MainClient {
 			 * 4.......3
 			 */
 			
-			glBegin(GL_QUADS);  // Player 0 paddle, Left paddle
-				glVertex2i(P1X , P1Y);	//1
-				glVertex2i(P1X + 20 , P1Y);	//2
-				glVertex2i(P1X + 20, P1Y + 60);	//3
-				glVertex2i(P1X , P1Y + 60);	//4
-			glEnd();
-			
 			glBegin(GL_QUADS);  // Player 1 paddle, Right paddle
 				glVertex2i(Display.getWidth() - 20, p2Y); //1
 				glVertex2i(Display.getWidth(), p2Y); //2
 				glVertex2i(Display.getWidth(), p2Y + 60); //3
 				glVertex2i(Display.getWidth() - 20, p2Y + 60); //4
 			glEnd();
-			//This has to be upside down otherwise they would all be in the same location
-			//So every tick the location is updated
-			//Finally draws all of the balls following  :p
+			
 			glColor3f(1, 0, 0);
 			BallFollower.onUpdate();
 			glColor3f(1, 1, 1);
 			//Ball
 			glBegin(GL_QUADS);//ball.getY() thingy
+				glTexCoord2d(0, 1);
 				glVertex2i(ball.getX(), ball.getY()); //1
+				glTexCoord2d(1, 1);
 				glVertex2i(ball.getX() + 20, ball.getY()); //2
+				glTexCoord2d(1, 0);
 				glVertex2i(ball.getX() + 20, ball.getY() + 20); //3
+				glTexCoord2d(0, 0);
 				glVertex2i(ball.getX(), ball.getY() + 20); //4
 			glEnd();
 			
@@ -402,6 +313,8 @@ public class MainClient {
 			{
 				whoPausedTheGame = ""; //Setting the variable to blank so no text is rendered
 			}
+			
+			Fonts.drawCharacter("a", 200, 200, 10);
 			Display.sync(60);
 			Display.update();
 		}
