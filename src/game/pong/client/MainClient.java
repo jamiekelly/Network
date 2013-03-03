@@ -42,8 +42,8 @@ import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MainClient {
 
-	static Paddle player1 = new Paddle(0, 0);
-	static Paddle player2 = new Paddle(0, 0);
+	static Paddle player1;
+	static Paddle player2;
 	
 	static boolean applet = false;
 	static boolean isPaused = false;
@@ -115,7 +115,7 @@ public class MainClient {
 		glMatrixMode(GL_MODELVIEW);
 		
 		Fonts.setUpTextures();
-		
+		Textures.loadTextures();
 		
 		
 		String options[] = {"Yes","No"};
@@ -197,11 +197,14 @@ public class MainClient {
 				new Thread(send).start();
 			}
 		}
-		
+		player1 = new Paddle(0, 0, Textures.player1);
+		player2 = new Paddle(0, 0, Textures.player2);
 		//int test = 0; TODO commented code to get rid of warning
 		/*THE START OF THE GAME SCREEN*/
+		Gui.addNewTextBox(new Gui.text("sweet lord", 100, 200, 2, "this"));
 		while(!Display.isCloseRequested())
 		{
+			
 			glClear(GL_COLOR_BUFFER_BIT);
 			ball.setX(ball.getX());
 			ball.setY(ball.getY());
@@ -209,10 +212,12 @@ public class MainClient {
 			player1.setY(P1Y);
 			player2.setX(p2X);
 			player2.setY(p2Y);
+			BallFollower.onUpdate();
+			PaddleShadow.onUpdate();
 			player1.draw();
 			player2.draw();
 			
-			
+			Gui.onUpdate();
 			Input.onUpdate();
 			
 			/*AI MOVEMENT*/
@@ -220,9 +225,9 @@ public class MainClient {
 			
 			
 			/*Text at the top of the screen*/
-			Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 1);
-			Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 1);
-			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1);
+			Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 4);
+			Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 4);
+			Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 4);
 			
 			//Drawing the Who paused the game text :p
 			Fonts.drawString(whoPausedTheGame, Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5);
@@ -254,28 +259,8 @@ public class MainClient {
 			 * .       .
 			 * 4.......3
 			 */
-			
-			glBegin(GL_QUADS);  // Player 1 paddle, Right paddle
-				glVertex2i(Display.getWidth() - 20, p2Y); //1
-				glVertex2i(Display.getWidth(), p2Y); //2
-				glVertex2i(Display.getWidth(), p2Y + 60); //3
-				glVertex2i(Display.getWidth() - 20, p2Y + 60); //4
-			glEnd();
-			
-			glColor3f(1, 0, 0);
-			BallFollower.onUpdate();
-			glColor3f(1, 1, 1);
 			//Ball
-			glBegin(GL_QUADS);//ball.getY() thingy
-				glTexCoord2d(0, 1);
-				glVertex2i(ball.getX(), ball.getY()); //1
-				glTexCoord2d(1, 1);
-				glVertex2i(ball.getX() + 20, ball.getY()); //2
-				glTexCoord2d(1, 0);
-				glVertex2i(ball.getX() + 20, ball.getY() + 20); //3
-				glTexCoord2d(0, 0);
-				glVertex2i(ball.getX(), ball.getY() + 20); //4
-			glEnd();
+			ball.draw();
 			
 			//Here we draw the text on who paused the screen! :p
 			if(isPaused)
@@ -314,7 +299,6 @@ public class MainClient {
 				whoPausedTheGame = ""; //Setting the variable to blank so no text is rendered
 			}
 			
-			Fonts.drawCharacter("a", 200, 200, 10);
 			Display.sync(60);
 			Display.update();
 		}
@@ -340,7 +324,7 @@ public class MainClient {
 			}
 			catch(Exception e)
 			{
-			
+				e.printStackTrace();
 			}
 		}
 	};
@@ -420,7 +404,9 @@ public class MainClient {
 						oos.writeObject(isPlayer2Paused);
 					}
 					Thread.sleep(20);
-				}catch(Exception e){}
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 	};

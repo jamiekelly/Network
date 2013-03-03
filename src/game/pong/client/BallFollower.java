@@ -5,9 +5,10 @@ import static org.lwjgl.opengl.GL11.glColor4f;
 public class BallFollower {
 	
 	private static int numOfFollowers = 20;
+	static int delayCount = 0;
+	static int delayAmount = 10;
 	private static Ball[] ballFollow = new Ball[numOfFollowers];
 	
-	@SuppressWarnings("serial")
 	public static class follow extends Ball
 	{
 		public follow(int x, int y) 
@@ -23,12 +24,11 @@ public class BallFollower {
 			ballFollow[i] = new follow(0,0);
 		}
 	}
-	static int delayCount = 0;
 	public static void onUpdate()
 	{
 		
 		delayCount++;
-		if(delayCount >= 3)
+		if(delayCount >= delayAmount)
 		{
 			for(int i = ballFollow.length - 1; i > 0; i--)
 			{
@@ -47,7 +47,7 @@ public class BallFollower {
 		for(int i = 0; i < ballFollow.length; i++)
 		{
 			glColor4f(1,1,1,opacity);
-			ballFollow[i].draw();
+			ballFollow[i].drawFollower();
 			//Math to calculate opacity decrease rate
 			opacity -= (float)(100 / ballFollow.length) / 100;
 			glColor4f(1,1,1,1);

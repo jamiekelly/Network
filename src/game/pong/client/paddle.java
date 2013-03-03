@@ -5,19 +5,25 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2d;
 import static org.lwjgl.opengl.GL11.glVertex2i;
-
-import java.io.IOException;
+import static org.lwjgl.opengl.GL11.glColor3f;
 
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 public class Paddle {
 	private int x, y;
-	public Paddle(int x, int y){
-		
+	private Texture tex;
+	private Texture shadow = Textures.shadow;
+	public Paddle(int x, int y, Texture tex){
+		this.x = x;
+		this.y = y;
+		this.tex = tex;
 	}
-	
+	public int getX(){
+		return x;
+	}
+	public int getY(){
+		return y;
+	}
 	public void setX(int x){
 		this.x = x;
 	}
@@ -27,14 +33,9 @@ public class Paddle {
 	}
 	
 	public void draw(){
-		Texture tex = null;
-		try {
-			tex = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/font/a" + 1 + ".png"), true);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(tex != null){
+			tex.bind();
 		}
-		tex.bind();
 		glBegin(GL_QUADS);
 			glTexCoord2d(0, 0);
 			glVertex2i(x , y);	//1
@@ -45,6 +46,25 @@ public class Paddle {
 			glTexCoord2d(0, 1);
 			glVertex2i(x , y + 60);	//4
 		glEnd();
-		tex.release();
+	}
+	public void drawShadow(){
+		if(tex.equals(Textures.player1)){
+			glColor3f(1,0,0);
+		}else{
+			glColor3f(0,0,1);
+		}
+		shadow.bind();
+		glBegin(GL_QUADS);
+			glTexCoord2d(0, 0);
+			glVertex2i(x , y);	//1
+			glTexCoord2d(1, 0);
+			glVertex2i(x + 20 , y);	//2
+			glTexCoord2d(1, 1);
+			glVertex2i(x + 20, y + 60);	//3
+			glTexCoord2d(0, 1);
+			glVertex2i(x , y + 60);	//4
+		glEnd();
+		
+		glColor3f(1,1,1);
 	}
 }
