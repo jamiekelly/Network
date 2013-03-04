@@ -35,7 +35,7 @@ public class JApplet extends Applet {
 		gameThread = new Thread() {
 			public void run() {
 				running = true;
-				MainClient.applet = true;
+				StateGame.applet = true;
 				try {
 					Display.setParent(display_parent);
 					Display.create();

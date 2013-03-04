@@ -26,7 +26,6 @@ public class Fonts {
 								'k', 'l', 'm', 'n', 'o', 'p', 'q','r', 's', 't', 'u', 'v',
 								'w', 'x', 'y', 'z'};
 	static char symbols[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	static float r = 1,g = 0,b = 1;
 	
 	public static void drawCharacter(char c, double x, double y, double size){
 		for(int i = 0; i < alphabet.length; i++){
@@ -41,8 +40,6 @@ public class Fonts {
 				float textureOffsetX = 0;
 				float textureOffsetY = 0;
 				
-				glColor3f(r,g,b);
-				Color.red.bind();
 				letterTexList.get(i).bind();
 				glBegin(GL_QUADS);
 					glTexCoord2f(textureOffsetX, textureOffsetY + textureHeight);
@@ -54,7 +51,6 @@ public class Fonts {
 					glTexCoord2f(textureOffsetX, textureOffsetY);
 					glVertex2d(x, y + height * size);
 				glEnd();
-				glColor3f(1,1,1);
 			}
 		}
 		//Need 2 for statements because the loop goes through the size of the of the
@@ -62,9 +58,9 @@ public class Fonts {
 		for(int i = 0; i < symbols.length; i++){
 			if(c == symbols[i]){
 				
-				//image size, e.g. 550x200
-				float width = symbolTexList.get(i).getImageWidth(); 
+				float width = symbolTexList.get(i).getImageWidth();
 				float height = symbolTexList.get(i).getImageHeight();
+				
 				//the physical width of the texture which will be used in glTexCoord (generally a float between 0 and 1)
 				float textureWidth = symbolTexList.get(i).getWidth();
 				float textureHeight = symbolTexList.get(i).getHeight();
@@ -72,19 +68,17 @@ public class Fonts {
 				float textureOffsetX = 0;
 				float textureOffsetY = 0;
 				
-				glColor3f(r,g,b);
 				symbolTexList.get(i).bind();
 				glBegin(GL_QUADS);
-					glTexCoord2f(textureOffsetX, textureOffsetY);
-					glVertex2d(x, y);
 					glTexCoord2f(textureOffsetX, textureOffsetY + textureHeight);
-					glVertex2d(x + (8 * size), y);
+					glVertex2d(x, y);
+					glTexCoord2f(textureOffsetX + textureWidth, textureOffsetY + textureHeight);
+					glVertex2d(x + width * size, y);
 					glTexCoord2f(textureOffsetX + textureWidth, textureOffsetY);
-					glVertex2d(x + (8 * size), y + (8 * size));
-					glTexCoord2f(textureOffsetX + textureWidth, textureOffsetY);
-					glVertex2d(x, y + (8 * size));
+					glVertex2d(x + width * size, y + height * size);
+					glTexCoord2f(textureOffsetX, textureOffsetY);
+					glVertex2d(x, y + height * size);
 				glEnd();
-				glColor3f(1,1,1);
 			}
 		}
 	}
@@ -115,8 +109,9 @@ public class Fonts {
 	 * and is the actual thing that will calculate all the spaces needed and 
 	 * location of the next textured quad
 	 */
-	public static void drawString(String text, int x, int y, double size){
+	public static void drawString(String text, int x, int y, double size, Color color){
 		int startX = x;
+		color.bind();
 		for(char c : text.toCharArray()){
 			if(c != ' ' && c != '\n'){
 				//If statement to check if letters need to be moved one down (look
@@ -142,9 +137,11 @@ public class Fonts {
 				y += 7 * size;
 			}
 		}
+		Color.white.bind();
 	}
 	public static int getWidth(String text, double size){
 		int x = 0;
+		int largestX = 0;
 		for(char c : text.toCharArray()){
 			if(c != 'i' && c != 'l'){
 				x += 6 * size;
@@ -157,9 +154,21 @@ public class Fonts {
 			if(c == ' '){
 				x += 8 * size;
 			}
+			if(c == '\n'){
+				x = 0;
+			}
+			/*
+			 * Some simple maths in case the \n was used, if it wasn't for the below
+			 * if statement the width would just keep adding according to the amount
+			 * of characters there were in the string, so if \n is present in the for 
+			 * statement then x is set to 0 yet largestX still remains the same :p
+			 */
+			if(largestX <= x){
+				largestX = x;
+			}
 		}
 		
-		return x;
+		return largestX;
 	}
 	public static int getHeight(String text, double size){
 		int y = (int) (7 * size);

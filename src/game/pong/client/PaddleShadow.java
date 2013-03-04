@@ -43,11 +43,11 @@ public class PaddleShadow {
 				padShadow2[i].setX(padShadow2[i - 1].getX());
 				padShadow2[i].setY(padShadow2[i - 1].getY());
 			}
-			padShadow1[0].setX(MainClient.player1.getX());
-			padShadow1[0].setY(MainClient.player1.getY());
+			padShadow1[0].setX(StateGame.player1.getX());
+			padShadow1[0].setY(StateGame.player1.getY());
 			
-			padShadow2[0].setX(MainClient.player2.getX());
-			padShadow2[0].setY(MainClient.player2.getY());
+			padShadow2[0].setX(StateGame.player2.getX());
+			padShadow2[0].setY(StateGame.player2.getY());
 			delayCount = 0;
 		}
 		draw();

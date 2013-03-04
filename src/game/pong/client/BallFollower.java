@@ -35,8 +35,8 @@ public class BallFollower {
 				ballFollow[i].setX(ballFollow[i - 1].getX());
 				ballFollow[i].setY(ballFollow[i - 1].getY());
 			}
-			ballFollow[0].setX(MainClient.ball.getX());
-			ballFollow[0].setY(MainClient.ball.getY());
+			ballFollow[0].setX(StateGame.ball.getX());
+			ballFollow[0].setY(StateGame.ball.getY());
 			delayCount = 0;
 		}
 		draw();

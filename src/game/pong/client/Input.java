@@ -14,49 +14,49 @@ public class Input{
 			{
 				if(Keyboard.isKeyDown(Keyboard.KEY_P))
 				{
-					if(MainClient.playerNum == 0)
+					if(StateGame.playerNum == 0)
 					{
-						if(MainClient.isPlayer1Paused == false){
-							MainClient.isPlayer1Paused = true;
+						if(StateGame.isPlayer1Paused == false){
+							StateGame.isPlayer1Paused = true;
 						}
-						else if(MainClient.isPlayer1Paused == true){
-							MainClient.isPlayer1Paused = false;
+						else if(StateGame.isPlayer1Paused == true){
+							StateGame.isPlayer1Paused = false;
 						}
 					}
-					if(MainClient.playerNum == 1)
+					if(StateGame.playerNum == 1)
 					{
-						if(MainClient.isPlayer2Paused == false){
-							MainClient.isPlayer2Paused = true;
+						if(StateGame.isPlayer2Paused == false){
+							StateGame.isPlayer2Paused = true;
 						}
-						else if(MainClient.isPlayer2Paused == true){
-							MainClient.isPlayer2Paused = false;
+						else if(StateGame.isPlayer2Paused == true){
+							StateGame.isPlayer2Paused = false;
 						}  //Changed from == false because I think it seems nicer like this. Don't know why
 					}
 				}
 			}
 		}
 		
-		if(!MainClient.isPlayer1Paused && !MainClient.isPlayer2Paused)
+		if(!StateGame.isPlayer1Paused && !StateGame.isPlayer2Paused)
 		{
 			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddles
 			{
-				if(MainClient.P1Y > 0)
+				if(StateGame.P1Y > 0)
 				{
-					if(MainClient.playerNum == 0 && !MainClient.isPlayer1Paused){
-						MainClient.P1Y -= 5;
-					}else if(MainClient.playerNum == 1 && !MainClient.isPlayer2Paused){
-						MainClient.p2Y -= 5;
+					if(StateGame.playerNum == 0 && !StateGame.isPlayer1Paused){
+						StateGame.P1Y -= 5;
+					}else if(StateGame.playerNum == 1 && !StateGame.isPlayer2Paused){
+						StateGame.p2Y -= 5;
 					}
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
 			{
-				if(MainClient.P1Y + 60 < Display.getHeight())
+				if(StateGame.P1Y + 60 < Display.getHeight())
 				{
-					if(MainClient.playerNum == 0 && !MainClient.isPlayer1Paused){
-						MainClient.P1Y += 5;
-					}else if(MainClient.playerNum == 1 && !MainClient.isPlayer2Paused){
-						MainClient.p2Y += 5;
+					if(StateGame.playerNum == 0 && !StateGame.isPlayer1Paused){
+						StateGame.P1Y += 5;
+					}else if(StateGame.playerNum == 1 && !StateGame.isPlayer2Paused){
+						StateGame.p2Y += 5;
 					}
 				}
 			}
