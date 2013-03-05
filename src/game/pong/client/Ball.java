@@ -20,6 +20,9 @@ public class Ball implements Serializable{
 	private int centerOfBallX;
 	private int centerOfBallY;
 	
+	private float prospectBallX;
+	private int prospectBallY;
+	
 	public Ball(int x, int y){
 		this.x = x;
 		this.y = y;
@@ -70,6 +73,22 @@ public class Ball implements Serializable{
 		this.centerOfBallY = centerOfBallY;
 	}
 	
+	public float getProspectBallX() {
+		return prospectBallX;
+	}
+
+	public void setProspectBallX(float f) {
+		this.prospectBallX = f;
+	}
+
+	public int getProspectBallY() {
+		return prospectBallY;
+	}
+
+	public void setProspectBallY(int prospectBallY) {
+		this.prospectBallY = prospectBallY;
+	}
+
 	public void draw(){
 		Textures.none.bind();
 		glBegin(GL_QUADS);//ball.getY() thingy

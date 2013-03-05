@@ -81,7 +81,7 @@ public class StateGame {
 		Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1, Color.white);
 		
 		//Drawing the Who paused the game text :p
-		Fonts.drawString(whoPausedTheGame, Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5, Color.white);
+		Fonts.drawString(whoPausedTheGame, Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  1, Color.white);
 		
 		/*Text if someone won the game!*/
 		String playerWon[] = {"Player One won the game!", "PLayer Two won the game!"};

@@ -20,9 +20,6 @@ public class Server {
 	static boolean isSinglePlayer = true;
 	
 	
-	static int difficulty = 0;
-	
-	
 	public static void startServer(String startIP){
 		if(isSinglePlayer)
 		{
@@ -57,7 +54,7 @@ public class Server {
 		new Thread(send).start();
 	}
 	
-	private static Runnable accept = new Runnable()
+	public static Runnable accept = new Runnable()
 	{
 		public void run()
 		{
@@ -190,6 +187,13 @@ public class Server {
 					//the paddle, same as in brick breaker
 					StateGame.ball.setdX(-StateGame.ball.getdX());
 					StateGame.ball.setdY((float) (((StateGame.P1Y+30)-StateGame.ball.getCenterOfBallY())/7.5));
+					/*if(isSinglePlayer)
+					{
+						while(StateGame.ball.getProspectBallX()<580){
+							StateGame.ball.setProspectBallX(StateGame.ball.getX() + StateGame.ball.getdX());
+							//Now set the Prospective Ycoord.  Which I ran out of time to do.
+						}
+					}*/
 				}
 				if(hitPlayersTwosPaddle)
 				{

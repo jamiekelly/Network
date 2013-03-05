@@ -9,14 +9,12 @@ If I put a '*' at the beginning of a line it means it's new so look at it and de
 -=PRIORITY #1 [DO IMMEDIATELY]=-
 
 - Add Dynamic GUI. By this I mean GUI that is possible to be added anywhere with one, or two lines of code and no hassle
-- Finish & implement the paddle class. - I'm on it... Rob 
-										*NEW [I'll do the paddle class first thing this weekend, YOU FOCUS ON THE GUI! 
-												Seriously I want to do this part Lol :p (Tim)]
 												
 X- Fix the bounce off the paddle [I seriously cannot figure out the math for this]
 
 -=Priority #2 [Do soon!]=-
 
+*- Fix hit detection, for paddle and ceiling.
 *- Have the game pause for a second after every score.
 *- Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
 *- Better edge detection for the paddle.  It looks like the edge of the paddle will hit the ball and then it doesn't 

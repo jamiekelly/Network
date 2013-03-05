@@ -3,6 +3,9 @@ package game.pong.client;
 import org.lwjgl.opengl.Display;
 
 public class AI {
+	
+	private static int moveToX = 200;
+	
 	public static void onUpdate(int difficulty){
 		
 		//TODO Improve the AI thinking and such
@@ -54,5 +57,13 @@ public class AI {
 				}
 			}
 		}
+	}
+
+	public static int getMoveToX() {
+		return moveToX;
+	}
+
+	public static void setMoveToX(int moveToX) {
+		AI.moveToX = moveToX;
 	}
 }
