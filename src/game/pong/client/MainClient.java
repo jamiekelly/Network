@@ -1,16 +1,5 @@
 package game.pong.client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
-//import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -32,15 +21,7 @@ import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glTexCoord2d;
-
-import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glVertex2i;
-
-import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class MainClient {
 	
 	public static void main(String []args)
@@ -77,8 +58,8 @@ public class MainClient {
 		Textures.loadTextures();
 		
 		/*THE START OF THE GAME SCREEN*/
-		Gui.addNewTextBox(new Gui.text("3 2 1 testing all the shuzz", 100, 200, 2, "this", "sweetLord", Color.blue));
-		Gui.textArray[Gui.getTextByName("sweetLord")].setBackgroundVisibility(true);
+		//Gui.addNewTextBox(new Gui.text("", 100, 200, 2, "this", "sweetLord", Color.blue));
+		//Gui.textArray[Gui.getTextByName("sweetLord")].setBackgroundVisibility(true);
 		StateGame.onSetup();
 		while(!Display.isCloseRequested())
 		{

@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL11.glColor4f;
 
 public class BallFollower {
 	
-	private static int numOfFollowers = 20;
+	private static int numOfFollowers = 5;
 	static int delayCount = 0;
 	static int delayAmount = 10;
 	private static Ball[] ballFollow = new Ball[numOfFollowers];

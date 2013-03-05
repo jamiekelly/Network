@@ -17,6 +17,7 @@ X- Fix the bounce off the paddle [I seriously cannot figure out the math for thi
 
 -=Priority #2 [Do soon!]=-
 
+*- Have the game pause for a second after every score.
 *- Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
 *- Better edge detection for the paddle.  It looks like the edge of the paddle will hit the ball and then it doesn't 
 - Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished

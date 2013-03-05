@@ -6,7 +6,7 @@ import org.newdawn.slick.opengl.Texture;
 
 public class PaddleShadow {
 	
-	static int maxShadows = 200;
+	static int maxShadows = 1;//I edited this for testing since it got annoying
 	static int delayCount = 0;
 	static int delayAmount = 0;
 	

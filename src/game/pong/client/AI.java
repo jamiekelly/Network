@@ -42,7 +42,7 @@ public class AI {
 							StateGame.p2Y += 1.5;
 						}
 						if(difficulty == 1){
-							StateGame.p2Y += 2.8;
+							StateGame.p2Y += 2.5;
 						}
 						if(difficulty == 2){
 							StateGame.p2Y += 4;

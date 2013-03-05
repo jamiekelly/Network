@@ -69,10 +69,7 @@ public class Server {
 				new Thread(receive).start();
 				new Thread(onUpdate).start();
 			}
-			catch(Exception e)
-			{
-			
-			}
+			catch(Exception e){}
 		}
 	};
 	
@@ -182,11 +179,6 @@ public class Server {
 					StateGame.ball.setY((int) (StateGame.ball.getY()-StateGame.ball.getdY()));
 				}
 				
-				/*
-				>>>>NOTE<<< TODO 
-				ball.getcenterOfBallX() = ball.getcenterOfBallX();
-				ball.getCenterOfBallY(); =  ball.getCenterOfBallY();  DELETE AFTER READING*/
-				
 				//Checking collision for the two player paddles if the
 				//ball is colliding with the paddle
 				boolean hitPlayerOnesPaddle = StateGame.ball.getCenterOfBallX() >= StateGame.P1X && StateGame.ball.getCenterOfBallX() <= StateGame.P1X + 20 && StateGame.ball.getCenterOfBallY() >= StateGame.P1Y && StateGame.ball.getCenterOfBallY() <= StateGame.P1Y + 60;
@@ -205,7 +197,6 @@ public class Server {
 					//the paddle, same as in brick breaker
 					StateGame.ball.setdX(-StateGame.ball.getdX());
 					StateGame.ball.setdY((float) (((StateGame.p2Y+30)-StateGame.ball.getCenterOfBallY())/7.5));
-					//ball.setdY(p2Y )
 				}
 				if(StateGame.ball.getCenterOfBallX() > Display.getWidth()) //Scored on RIGHT side of screen
 				{
@@ -218,7 +209,7 @@ public class Server {
 						StateGame.ball.setY(Display.getHeight() / 2);
 					}
 					StateGame.ball.setdX(5);
-					StateGame.ball.setdY(0);
+					StateGame.ball.setdY((float) (Math.random()*8-4));
 					
 				}
 				if(StateGame.ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
@@ -231,8 +222,8 @@ public class Server {
 						StateGame.ball.setX(Display.getWidth() / 2);
 						StateGame.ball.setY(Display.getHeight() / 2);
 					}
-					StateGame.ball.setdX(5);
-					StateGame.ball.setdY(0);
+					StateGame.ball.setdX(-5);
+					StateGame.ball.setdY((float) (Math.random()*8-4));
 				}
 				if(StateGame.ball.getY() < 0){ //Bounce off ceiling
 					StateGame.ball.getY();

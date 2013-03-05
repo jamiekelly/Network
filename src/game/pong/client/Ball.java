@@ -14,8 +14,8 @@ public class Ball implements Serializable{
 	private int x = 0;
 	private int y = 0;
 	
-	private float dX = 5;
-	private float dY = 0;
+	private float dX;
+	private float dY;
 	
 	private int centerOfBallX;
 	private int centerOfBallY;

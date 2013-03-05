@@ -15,7 +15,7 @@ public class StateGame {
 	static boolean isPlayer2Paused = false;
 	
 	static int isSinglePlayer;
-	static int difficulty;
+	static int difficulty = 1;
 	
 	static String whoPausedTheGame = "";
 	static int playerNum;
@@ -39,6 +39,16 @@ public class StateGame {
 		p2X = (Display.getWidth() - 20);
 		ball.setX(Display.getWidth()/2);
 		ball.setY(Display.getHeight()/2);
+		ball.setdY((float) Math.random()*8-4);
+		//Ball either goes left or right at start
+		if(((float) Math.random()*2)<=1)
+		{
+			ball.setdX(5);
+		}
+		else
+		{
+			ball.setdX(-5);
+		}
 		BallFollower.createFollowers();
 		Server.startServer("192.168.0.7:7777");
 	}
@@ -46,12 +56,15 @@ public class StateGame {
 	public static void onUpdate(){
 		ball.setX(ball.getX());
 		ball.setY(ball.getY());
+		
 		player1.setX(P1X);
 		player1.setY(P1Y);
 		player2.setX(p2X);
 		player2.setY(p2Y);
 		BallFollower.onUpdate();
-		PaddleShadow.onUpdate();
+		
+		
+		//PaddleShadow.onUpdate();
 		player1.draw();
 		player2.draw();
 		
@@ -63,9 +76,9 @@ public class StateGame {
 		
 		
 		/*Text at the top of the screen*/
-		Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 4, Color.white);
-		Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 4, Color.white);
-		Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 4, Color.white);
+		Fonts.drawString("Pong",(Display.getWidth()/2)-50,20, 1, Color.white);
+		Fonts.drawString(score0 + "", (int)(Display.getWidth()*.25)-40, 20, 1, Color.white);
+		Fonts.drawString(score1 + "", (int)(Display.getWidth()*.75)-40, 20, 1, Color.white);
 		
 		//Drawing the Who paused the game text :p
 		Fonts.drawString(whoPausedTheGame, Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5, Color.white);
@@ -88,16 +101,6 @@ public class StateGame {
 		{
 			Fonts.drawString(playerWon[1], Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5, Color.white);
 		}
-		
-		//Setting color after to white
-		/*
-		 * 1.......2
-		 * .       .
-		 * .       .
-		 * .       .
-		 * 4.......3
-		 */
-		//Ball
 		ball.draw();
 		
 		//Here we draw the text on who paused the screen! :p
