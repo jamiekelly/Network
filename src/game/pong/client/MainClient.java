@@ -60,12 +60,12 @@ public class MainClient {
 		/*THE START OF THE GAME SCREEN*/
 		//Gui.addNewTextBox(new Gui.text("", 100, 200, 2, "this", "sweetLord", Color.blue));
 		//Gui.textArray[Gui.getTextByName("sweetLord")].setBackgroundVisibility(true);
-		StateGame.onSetup();
 		while(!Display.isCloseRequested())
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 			
-			StateGame.onUpdate();
+			StateManager.onUpdate();
+			
 			Display.sync(60);
 			Display.update();
 		}

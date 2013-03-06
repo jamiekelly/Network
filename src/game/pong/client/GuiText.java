@@ -28,7 +28,9 @@ public class GuiText {
 	public String getName(){
 		return name;
 	}
-	
+	public String getState(){
+		return state;
+	}
 	public void setBackgroundVisibility(boolean b){
 		this.hasBackground = b;
 	}
