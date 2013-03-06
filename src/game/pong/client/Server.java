@@ -249,6 +249,7 @@ public class Server {
 				if(StateGame.ball.getCenterOfBallX() > Display.getWidth()) //Scored on RIGHT side of screen
 				{
 					StateGame.score0++;
+					
 					if(StateGame.score0 == 21){
 						StateGame.ball.setX(Display.getWidth() / 2);
 						StateGame.ball.setY((int) (Display.getHeight() * 0.25));
@@ -257,11 +258,18 @@ public class Server {
 						StateGame.ball.setY(Display.getHeight() / 2);
 				
 					}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					StateGame.ball.setdX(5);
 					StateGame.ball.setdY((float) (Math.random()*8-4));
 				}
 				if(StateGame.ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
 				{
+					
 					StateGame.score1 ++;
 					if(StateGame.score1 == 21){
 						StateGame.ball.setX(Display.getWidth() / 2);
@@ -269,6 +277,12 @@ public class Server {
 					}else{
 						StateGame.ball.setX(Display.getWidth() / 2);
 						StateGame.ball.setY(Display.getHeight() / 2);
+					}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					StateGame.ball.setdX(-5);
 					StateGame.ball.setdY((float) (Math.random()*8-4));
