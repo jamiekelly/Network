@@ -13,6 +13,7 @@ public class StateGame {
 	
 	static boolean isPlayer1Paused = false;
 	static boolean isPlayer2Paused = false;
+	static boolean isTwoPlayerOfflineMode = true;
 	
 	static int isSinglePlayer;
 	static int difficulty = 6;
@@ -28,6 +29,9 @@ public class StateGame {
 	static int p2X;
 	static int p2Y;
 	
+	//Making these dynamic so we can add bonuses and boosts easier :p
+	static int p1Speed = 5;
+	static int p2Speed = 5;
 	static Ball ball = new Ball(0,0, 20);
 	
 	
@@ -72,7 +76,9 @@ public class StateGame {
 		Input.onUpdate();
 		
 		/*AI MOVEMENT*/
-		AI.onUpdate(difficulty);
+		if(!isTwoPlayerOfflineMode){
+			AI.onUpdate(difficulty);
+		}
 		
 		
 		/*Text at the top of the screen*/

@@ -40,9 +40,9 @@ public class Input{
 				if(StateGame.P1Y > 0)
 				{
 					if(StateGame.playerNum == 0 && !StateGame.isPlayer1Paused){
-						StateGame.P1Y -= 5;
+						StateGame.P1Y -= StateGame.p2Speed;
 					}else if(StateGame.playerNum == 1 && !StateGame.isPlayer2Paused){
-						StateGame.p2Y -= 5;
+						StateGame.p2Y -= StateGame.p2Speed;
 					}
 				}
 			}
@@ -51,9 +51,26 @@ public class Input{
 				if(StateGame.P1Y + 60 < Display.getHeight())
 				{
 					if(StateGame.playerNum == 0 && !StateGame.isPlayer1Paused){
-						StateGame.P1Y += 5;
+						StateGame.P1Y += StateGame.p2Speed;
 					}else if(StateGame.playerNum == 1 && !StateGame.isPlayer2Paused){
-						StateGame.p2Y += 5;
+						StateGame.p2Y += StateGame.p2Speed;
+					}
+				}
+			}
+			if(StateGame.isTwoPlayerOfflineMode)
+			{
+				if(Keyboard.isKeyDown(Keyboard.KEY_W))
+				{
+					if(StateGame.p2Y > 0)
+					{
+						StateGame.p2Y -= StateGame.p2Speed;
+					}
+				}
+				if(Keyboard.isKeyDown(Keyboard.KEY_S))
+				{
+					if(StateGame.p2Y + 60 < Display.getHeight())
+					{
+						StateGame.p2Y += StateGame.p2Speed;
 					}
 				}
 			}
