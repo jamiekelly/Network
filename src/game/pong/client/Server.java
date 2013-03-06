@@ -8,8 +8,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.swing.JOptionPane;
-
 import org.lwjgl.opengl.Display;
 
 public class Server {
@@ -228,7 +226,7 @@ public class Server {
 						StateGame.ball.setProspectBallY(StateGame.ball.getY());
 						while(StateGame.ball.getProspectBallX() <= StateGame.player2.getX())
 						{
-							StateGame.ball.setProspectBallX((float) (StateGame.ball.getProspectBallX() - StateGame.ball.getdX() - .002));
+							StateGame.ball.setProspectBallX((float) (StateGame.ball.getProspectBallX() - (StateGame.ball.getdX() - .002)));
 							StateGame.ball.setProspectBallY(StateGame.ball.getProspectBallY() - StateGame.ball.getdY());
 							if((StateGame.ball.getProspectBallY() <= 1) || (StateGame.ball.getProspectBallY() >= Display.getHeight()-15))
 							{
@@ -260,10 +258,7 @@ public class Server {
 					}
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					} catch (InterruptedException e) {e.printStackTrace();}
 					StateGame.ball.setdX(5);
 					StateGame.ball.setdY((float) (Math.random()*8-4));
 				}
@@ -280,10 +275,7 @@ public class Server {
 					}
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					} catch (InterruptedException e) {e.printStackTrace();}
 					StateGame.ball.setdX(-5);
 					StateGame.ball.setdY((float) (Math.random()*8-4));
 					if(isSinglePlayer && (StateGame.difficulty>3))//Finds were the AI paddle will need to move
@@ -292,7 +284,7 @@ public class Server {
 						StateGame.ball.setProspectBallY(StateGame.ball.getY());
 						while(StateGame.ball.getProspectBallX() <= StateGame.player2.getX())
 						{
-							StateGame.ball.setProspectBallX((float) (StateGame.ball.getProspectBallX() - StateGame.ball.getdX() - .002));
+							StateGame.ball.setProspectBallX((float) (StateGame.ball.getProspectBallX() - (StateGame.ball.getdX() - .002)));
 							StateGame.ball.setProspectBallY(StateGame.ball.getProspectBallY() - StateGame.ball.getdY());
 							if((StateGame.ball.getProspectBallY() <= 1) || (StateGame.ball.getProspectBallY() >= Display.getHeight()-15))
 							{
@@ -306,12 +298,10 @@ public class Server {
 				{ 
 					StateGame.ball.setdY(-StateGame.ball.getdY());
 				}
-
+				
 				try {
 					Thread.sleep(20);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				} catch (InterruptedException e) {e.printStackTrace();}
 			}
 		}
 	};

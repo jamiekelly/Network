@@ -68,7 +68,7 @@ public class Ball implements Serializable{
 	}
 	
 	public int getCenterOfBallY() {
-		this.setCenterOfBallY(this.getY() + 10);
+		this.setCenterOfBallY(this.getY() + (this.getWAndH()/2));
 		return centerOfBallY;
 	}
 	public void setCenterOfBallY(int centerOfBallY) {
@@ -79,8 +79,8 @@ public class Ball implements Serializable{
 		return prospectBallX;
 	}
 
-	public void setProspectBallX(float d) {
-		this.prospectBallX = d;
+	public void setProspectBallX(float prospectBallX) {
+		this.prospectBallX = prospectBallX;
 	}
 
 	public float getProspectBallY() {
