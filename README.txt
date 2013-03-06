@@ -8,18 +8,17 @@ If I put a '*' at the beginning of a line it means it's new so look at it and de
 
 -=PRIORITY #1 [DO IMMEDIATELY]=-
 
-- Add Dynamic GUI. By this I mean GUI that is possible to be added anywhere with one, or two lines of code and no hassle
-												
+X- Add Dynamic GUI. By this I mean GUI that is possible to be added anywhere with one, or two lines of code and no hassle
+- Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished												
 X- Fix the bounce off the paddle [I seriously cannot figure out the math for this]
 
 -=Priority #2 [Do soon!]=-
 
-*- Fix hit detection, for paddle and ceiling.
-*- Have the game pause for a second after every score.
-*- Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
-*- Better edge detection for the paddle.  It looks like the edge of the paddle will hit the ball and then it doesn't 
-- Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished
-- Draw font so it's possible to write things on screen (most likely draw with a stylesheet and then load from that
+- Fix hit detection, for paddle and ceiling.
+- Have the game pause for a second after every score.
+- Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
+- Better edge detection for the paddle.  It looks like the edge of the paddle will hit the ball and then it doesn't 
+X- Draw font so it's possible to write things on screen (most likely draw with a stylesheet and then load from that
 - edit the difficulties since they're too hard with the fixed paddle bounce 
 		(Or even better, make the difficulties dependent on the dX and dY)
 - Do something about the ball hitting the top or bottom of the paddle 
@@ -29,8 +28,8 @@ X- Fix so that the ball does shoot off to the left and score a point for player 
 
 -=Priority #3 [Do whenever]=-
 
-- Create graphics for the game (paddles, ball etc)
-- Create multiple "States" e.g. When one player wins, when other loses etc. Possibly create different game modes? 
+X- Create graphics for the game (paddles, ball etc)
+X- Create multiple "States" e.g. When one player wins, when other loses etc. Possibly create different game modes? 
 
 
 
@@ -91,27 +90,23 @@ X- Fix so that the ball does shoot off to the left and score a point for player 
 
 --==NOTES!==-- [Delete my notes and replace with your's when you update]
 
-- Tim
+- Rob
 
-Thursday 28th. My Time
+Okay, so the whole weekend I haven't been updating the Readme and I should have! I'm silly for
+doing so. Anyway. As you can see there is a lot of new changes, I pretty much moved a lot of the
+code about to make it more organised and easier to access for later use. 
 
-Great job with the balltrailing!  Beautiful implementation of it, I never would have thought to do it that way!
-I edited the class just to put all the variables at the top and encapsulated them.  (Meaning I just set them to private)
+I also added 2 forms of GUI, buttons and text, the text is a little messed up but that's because
+of the scaling as the original images are only 8x8 pixels, I'm going to probably try and load them into
+32x32 or something along those lines as 8x8 is just too small of a font and if we try to
+make the text larger then it doesn't look good at all with the text. Resizing incorrectly is a problem.
 
-I also changed it so that the 'accept' thread doesn't get called for single player 
-and just made directly called the 'onUpdate' thread.  It was pointless the other way.
+I've made it so that the buttons will not be rendered or updated if they are not in their appropriate state.
+This will how ever not work if you aren't naming the states of the buttons upon creating them
+If you define the state of the gui object when you create it the game won't have any problems and will just 
+draw it/update it when actually appropriate. Also try to setUp all the objects in the setUp methods of each state
+class as it's only being run once to avoid getting massive errors and the code being multiplied over and over again.
 
-I was pretty busy with homework today.  So I couldn't get too much done.  
+All right, so there have been a few or many bug fixes actually and I will try to work on some
+of the bugs stated above. Thanks!
 
-I might take a break tomorrow and just relax and play games since I've been working on this every night this week, 
-and then this weekend I'll work on this the whole time!  Except I have a couple things to do though, they shouldn't take too long.
-
-Side-note: Don't touch my paddle class, I've been planning on doing it all week :p 
-	Since I enjoyed the ball class so much I want to do the paddle class too :p
-	
-Ohh and I would change the ballfollower class so that when you construct it you can declare (as a parameter)
-	how many balls will follow.  That will make for quick adjustments in the future, and then we can make it vary in the code.
-	Instead of it always being stuck at five. I would have changed it but I was too busy.
-
-I just realized this but did ballfollowers really need to be a superClass?  
-	I don't really know anything about superClasses so I'm curious.
