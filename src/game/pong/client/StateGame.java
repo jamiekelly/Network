@@ -15,7 +15,7 @@ public class StateGame {
 	static boolean isPlayer2Paused = false;
 	
 	static int isSinglePlayer;
-	static int difficulty = 1;
+	static int difficulty = 6;
 	
 	static String whoPausedTheGame = "";
 	static int playerNum;
@@ -28,15 +28,15 @@ public class StateGame {
 	static int p2X;
 	static int p2Y;
 	
-	static Ball ball = new Ball(0,0);
+	static Ball ball = new Ball(0,0, 20);
 	
 	
 	public static void onSetup(){
-		player1 = new Paddle(0, 0, Textures.player1);
-		player2 = new Paddle(0, 0, Textures.player2);
-		P1Y = (Display.getHeight()/2) - 30; 
-		p2Y = (Display.getHeight()/2) - 30;
-		p2X = (Display.getWidth() - 20);
+		player1 = new Paddle(0, 0, 20, 60, Textures.player1);
+		player2 = new Paddle(0, 0, 20, 60, Textures.player2);
+		P1Y = (Display.getHeight()/2) - StateGame.player1.getMidHeight(); 
+		p2Y = (Display.getHeight()/2) - StateGame.player2.getMidHeight();
+		p2X = (Display.getWidth() -  StateGame.player2.getWidth());
 		ball.setX(Display.getWidth()/2);
 		ball.setY(Display.getHeight()/2);
 		ball.setdY((float) Math.random()*8-4);

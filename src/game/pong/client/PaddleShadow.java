@@ -17,7 +17,7 @@ public class PaddleShadow {
 	
 	public static class pShaddow extends Paddle{
 		public pShaddow(int x, int y, Texture tex) {
-			super(x, y, tex);
+			super(x, y, 20, 60, tex);
 		}
 	}
 	public static void createShadows(){

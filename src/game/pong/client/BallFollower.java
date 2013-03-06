@@ -11,9 +11,9 @@ public class BallFollower {
 	
 	public static class follow extends Ball
 	{
-		public follow(int x, int y) 
+		public follow(int x, int y, int dimensions) 
 		{
-			super(x, y);
+			super(x, y, dimensions);
 		}
 	}
 	
@@ -21,7 +21,7 @@ public class BallFollower {
 	{
 		for(int i = 0; i < ballFollow.length; i++)
 		{
-			ballFollow[i] = new follow(0,0);
+			ballFollow[i] = new follow(0,0, StateGame.ball.getWAndH());
 		}
 	}
 	public static void onUpdate()

@@ -163,9 +163,13 @@ public class Server {
 				}else{
 					StateGame.isPaused = false;
 				}
+				/*FUTURE NOTE- 
+				 * (dX > 0) ball moves LEFT 
+				 * (dX < 0) ball moves RIGHT 
+				 * */
 				if(!StateGame.isPaused && ((StateGame.score0 < 21) && (StateGame.score1 < 21)))
 				{
-					if(StateGame.ball.getdX() > 0){
+					if(StateGame.ball.getdX() > 0){//Makes ball go faster slowly over time
 						StateGame.ball.setdX((float) (StateGame.ball.getdX() + .002));
 					}else{
 						StateGame.ball.setdX((float) (StateGame.ball.getdX() - .002));
@@ -178,22 +182,62 @@ public class Server {
 				
 				//Checking collision for the two player paddles if the
 				//ball is colliding with the paddle
-				boolean hitPlayerOnesPaddle = StateGame.ball.getCenterOfBallX() >= StateGame.P1X && StateGame.ball.getCenterOfBallX() <= StateGame.P1X + 20 && StateGame.ball.getCenterOfBallY() >= StateGame.P1Y && StateGame.ball.getCenterOfBallY() <= StateGame.P1Y + 60;
-				boolean hitPlayersTwosPaddle = StateGame.ball.getCenterOfBallX() >= StateGame.p2X && StateGame.ball.getCenterOfBallX() <= StateGame.p2X + 20 && StateGame.ball.getCenterOfBallY() >= StateGame.p2Y && StateGame.ball.getCenterOfBallY() <= StateGame.p2Y + 60;
+				boolean hitPlayerOnesPaddle = ((StateGame.ball.getX() > StateGame.P1X) 
+											&& (StateGame.ball.getX() < (StateGame.P1X + StateGame.player1.getWidth()))
+											&& (StateGame.ball.getY() > StateGame.P1Y))
+											&& (StateGame.ball.getY() < (StateGame.P1Y + StateGame.player1.getHeight()))
+											||(((StateGame.ball.getX() + StateGame.ball.getWAndH()) > StateGame.P1X) 
+											&& ((StateGame.ball.getX() + StateGame.ball.getWAndH()) < StateGame.P1X + StateGame.player1.getWidth())
+											&& (StateGame.ball.getY() > StateGame.P1Y))
+											&& (StateGame.ball.getY() < (StateGame.P1Y + StateGame.player1.getHeight()))
+											||((StateGame.ball.getX() > StateGame.P1X) 
+											&& (StateGame.ball.getX() < (StateGame.P1X + StateGame.player1.getWidth()))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH())  > StateGame.P1Y))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH()) < (StateGame.P1Y + StateGame.player1.getHeight()))
+											||(((StateGame.ball.getX() + StateGame.ball.getWAndH()) > StateGame.P1X) 
+											&& ((StateGame.ball.getX() + StateGame.ball.getWAndH()) < (StateGame.P1X + StateGame.player1.getWidth()))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH())  > StateGame.P1Y))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH()) < (StateGame.P1Y + StateGame.player1.getHeight()));
+											
+				boolean hitPlayersTwosPaddle = ((StateGame.ball.getX() > StateGame.p2X) 
+											&& (StateGame.ball.getX() < (StateGame.p2X + StateGame.player2.getWidth()))
+											&& (StateGame.ball.getY() > StateGame.p2Y))
+											&& (StateGame.ball.getY() < (StateGame.p2Y + StateGame.player2.getHeight()))
+											||(((StateGame.ball.getX() + StateGame.ball.getWAndH()) > StateGame.p2X) 
+											&& ((StateGame.ball.getX() + StateGame.ball.getWAndH()) < (StateGame.p2X + StateGame.player2.getWidth()))
+											&& (StateGame.ball.getY() > StateGame.p2Y))
+											&& (StateGame.ball.getY() < (StateGame.p2Y + StateGame.player2.getHeight()))
+											||((StateGame.ball.getX() > StateGame.p2X) 
+											&& (StateGame.ball.getX() < (StateGame.p2X + StateGame.player2.getWidth()))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH())  > StateGame.p2Y))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH()) < (StateGame.p2Y + StateGame.player2.getHeight()))
+											||(((StateGame.ball.getX() + StateGame.ball.getWAndH()) > StateGame.p2X) 
+											&& ((StateGame.ball.getX() + StateGame.ball.getWAndH()) < (StateGame.p2X + StateGame.player2.getWidth()))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH())  > StateGame.p2Y))
+											&& ((StateGame.ball.getY() + StateGame.ball.getWAndH()) < (StateGame.p2Y + StateGame.player2.getHeight()));
 				
 				if(hitPlayerOnesPaddle)
 				{
 					//Calculating where the ball will go after being hit off
 					//the paddle, same as in brick breaker
 					StateGame.ball.setdX(-StateGame.ball.getdX());
-					StateGame.ball.setdY((float) (((StateGame.P1Y+30)-StateGame.ball.getCenterOfBallY())/7.5));
-					/*if(isSinglePlayer)
+					StateGame.ball.setdY((float) (((StateGame.P1Y + (StateGame.player1.getHeight()/2))-StateGame.ball.getCenterOfBallY())/7.5));
+					if(isSinglePlayer && (StateGame.difficulty>3))//Finds were the AI paddle will need to move
 					{
-						while(StateGame.ball.getProspectBallX()<580){
-							StateGame.ball.setProspectBallX(StateGame.ball.getX() + StateGame.ball.getdX());
-							//Now set the Prospective Ycoord.  Which I ran out of time to do.
+						StateGame.ball.setProspectBallX(StateGame.ball.getX());
+						StateGame.ball.setProspectBallY(StateGame.ball.getY());
+						while(StateGame.ball.getProspectBallX() <= StateGame.player2.getX())
+						{
+							StateGame.ball.setProspectBallX((float) (StateGame.ball.getProspectBallX() - StateGame.ball.getdX() - .002));
+							StateGame.ball.setProspectBallY(StateGame.ball.getProspectBallY() - StateGame.ball.getdY());
+							if((StateGame.ball.getProspectBallY() <= 1) || (StateGame.ball.getProspectBallY() >= Display.getHeight()-15))
+							{
+								StateGame.ball.setdY(-StateGame.ball.getdY());
+							}
 						}
-					}*/
+						StateGame.player2.setMoveToY(StateGame.ball.getProspectBallY());
+						StateGame.ball.setdY((float) (((StateGame.P1Y + (StateGame.player1.getHeight()/2))-StateGame.ball.getCenterOfBallY())/7.5));//Resets dY
+					}
 				}
 				if(hitPlayersTwosPaddle)
 				{
@@ -211,10 +255,10 @@ public class Server {
 					}else{
 						StateGame.ball.setX(Display.getWidth() / 2);
 						StateGame.ball.setY(Display.getHeight() / 2);
+				
 					}
 					StateGame.ball.setdX(5);
 					StateGame.ball.setdY((float) (Math.random()*8-4));
-					
 				}
 				if(StateGame.ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
 				{
@@ -228,16 +272,27 @@ public class Server {
 					}
 					StateGame.ball.setdX(-5);
 					StateGame.ball.setdY((float) (Math.random()*8-4));
+					if(isSinglePlayer && (StateGame.difficulty>3))//Finds were the AI paddle will need to move
+					{
+						StateGame.ball.setProspectBallX(StateGame.ball.getX());
+						StateGame.ball.setProspectBallY(StateGame.ball.getY());
+						while(StateGame.ball.getProspectBallX() <= StateGame.player2.getX())
+						{
+							StateGame.ball.setProspectBallX((float) (StateGame.ball.getProspectBallX() - StateGame.ball.getdX() - .002));
+							StateGame.ball.setProspectBallY(StateGame.ball.getProspectBallY() - StateGame.ball.getdY());
+							if((StateGame.ball.getProspectBallY() <= 1) || (StateGame.ball.getProspectBallY() >= Display.getHeight()-15))
+							{
+								StateGame.ball.setdY(-StateGame.ball.getdY());
+							}
+						}
+						StateGame.player2.setMoveToY(StateGame.ball.getProspectBallY());
+					}
 				}
-				if(StateGame.ball.getY() < 0){ //Bounce off ceiling
-					StateGame.ball.getY();
+				if((StateGame.ball.getY() <= 1) || (StateGame.ball.getY() >= Display.getHeight()-15))//Bounce off ceiling
+				{ 
 					StateGame.ball.setdY(-StateGame.ball.getdY());
 				}
-				if(StateGame.ball.getY() > Display.getHeight()) //Bounce off floor
-				{
-					StateGame.ball.setY(Display.getHeight() - 1);
-					StateGame.ball.setdY(-StateGame.ball.getdY());
-				}
+
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {

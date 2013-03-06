@@ -10,28 +10,25 @@ public class Input{
 	public static void onUpdate(){
 		while(Keyboard.next())
 		{
-			if(Keyboard.getEventKeyState())
+			if(Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_P))
 			{
-				if(Keyboard.isKeyDown(Keyboard.KEY_P))
+				if(StateGame.playerNum == 0)
 				{
-					if(StateGame.playerNum == 0)
-					{
-						if(StateGame.isPlayer1Paused == false){
-							StateGame.isPlayer1Paused = true;
-						}
-						else if(StateGame.isPlayer1Paused == true){
-							StateGame.isPlayer1Paused = false;
-						}
+					if(StateGame.isPlayer1Paused == false){
+						StateGame.isPlayer1Paused = true;
 					}
-					if(StateGame.playerNum == 1)
-					{
-						if(StateGame.isPlayer2Paused == false){
-							StateGame.isPlayer2Paused = true;
-						}
-						else if(StateGame.isPlayer2Paused == true){
-							StateGame.isPlayer2Paused = false;
-						}  //Changed from == false because I think it seems nicer like this. Don't know why
+					else if(StateGame.isPlayer1Paused == true){
+						StateGame.isPlayer1Paused = false;
 					}
+				}
+				if(StateGame.playerNum == 1)
+				{
+					if(StateGame.isPlayer2Paused == false){
+						StateGame.isPlayer2Paused = true;
+					}
+					else if(StateGame.isPlayer2Paused == true){
+						StateGame.isPlayer2Paused = false;
+					}  //Changed from == false because I think it seems nicer like this. Don't know why
 				}
 			}
 		}

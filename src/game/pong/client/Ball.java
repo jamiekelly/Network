@@ -19,13 +19,15 @@ public class Ball implements Serializable{
 	
 	private int centerOfBallX;
 	private int centerOfBallY;
+	private int wAndH;
 	
 	private float prospectBallX;
-	private int prospectBallY;
+	private float prospectBallY;
 	
-	public Ball(int x, int y){
+	public Ball(int x, int y, int dimensions){
 		this.x = x;
 		this.y = y;
+		this.wAndH = dimensions;
 	}
 	
 	public int getX() {  //Getter for ball.X
@@ -58,7 +60,7 @@ public class Ball implements Serializable{
 
 	
 	public int getCenterOfBallX() {
-		this.setCenterOfBallX(this.getX() + 10);
+		this.setCenterOfBallX(this.getX() + (this.getWAndH()/2));
 		return centerOfBallX;
 	}
 	public void setCenterOfBallX(int centerOfBallX) {
@@ -77,29 +79,37 @@ public class Ball implements Serializable{
 		return prospectBallX;
 	}
 
-	public void setProspectBallX(float f) {
-		this.prospectBallX = f;
+	public void setProspectBallX(float d) {
+		this.prospectBallX = d;
 	}
 
-	public int getProspectBallY() {
+	public float getProspectBallY() {
 		return prospectBallY;
 	}
 
-	public void setProspectBallY(int prospectBallY) {
+	public void setProspectBallY(float prospectBallY) {
 		this.prospectBallY = prospectBallY;
+	}
+	
+	public int getWAndH() {
+		return wAndH;
+	}
+
+	public void setWAndHt(int wAndH) {
+		this.wAndH = wAndH;
 	}
 
 	public void draw(){
 		Textures.none.bind();
 		glBegin(GL_QUADS);//ball.getY() thingy
 			glTexCoord2d(0, 1);
-			glVertex2i(x, y); //1
+			glVertex2i(this.getX(), this.getY()); //1
 			glTexCoord2d(1, 1);
-			glVertex2i(x + 20, y); //2
+			glVertex2i(this.getX() + this.getWAndH(), this.getY()); //2
 			glTexCoord2d(1, 0);
-			glVertex2i(x + 20, y + 20); //3
+			glVertex2i(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
 			glTexCoord2d(0, 0);
-			glVertex2i(x, y + 20); //4
+			glVertex2i(this.getX(), this.getY() + this.getWAndH()); //4
 		glEnd();
 	}
 	
@@ -108,30 +118,32 @@ public class Ball implements Serializable{
 		Textures.none.bind();
 		glBegin(GL_LINES);//1 to 2
 			glTexCoord2d(0, 0);
-			glVertex2i(x, y); //1
+			glVertex2i(this.getX(), this.getY()); //1
 			glTexCoord2d(1, 1);
-			glVertex2i(x + 20, y); //2
+			glVertex2i(this.getX() + this.getWAndH(), this.getY()); //2
 		glEnd();
 		
 		glBegin(GL_LINES);//2 to 3
 			glTexCoord2d(0, 0);
-			glVertex2i(x + 20, y); //2
+			glVertex2i(this.getX() + this.getWAndH(), this.getY()); //2
 			glTexCoord2d(1, 1);
-			glVertex2i(x + 20, y + 20); //3
+			glVertex2i(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
 		glEnd();
 		
 		glBegin(GL_LINES);//3 to 4
 			glTexCoord2d(0, 0);
-			glVertex2i(x + 20, y + 20); //3
+			glVertex2i(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
 			glTexCoord2d(1, 1);
-			glVertex2i(x , y + 20); //4
+			glVertex2i(this.getX() , this.getY() + this.getWAndH()); //4
 		glEnd();
 		
 		glBegin(GL_LINES);//4 to 1
 			glTexCoord2d(0, 0);
-			glVertex2i(x, y + 20); //4
+			glVertex2i(this.getX(), this.getY() + this.getWAndH()); //4
 			glTexCoord2d(1, 1);
-			glVertex2i(x, y); //1
+			glVertex2i(this.getX(), this.getY()); //1
 		glEnd();
 	}
+
+
 }
