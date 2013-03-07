@@ -22,7 +22,7 @@ public class StateManager {
 	 * 	settings - Changing settings and stuff
 	 * 	game - actual game screen
 	 * 	win - winning screen
-	 * 	loose - loosing screen
+	 * 	lose - losing screen
 	 */
 	static String State = "menu";
 	static String changeToState = "";
@@ -129,7 +129,7 @@ public class StateManager {
 		}
 	}
 	public static void changeState(String toState){
-		if(!State.equals(toState.toLowerCase())){
+		if(!State.equals(toState)){
 			changeToState = toState;
 			hasStartedChanging = true;
 			hasFinishedChanging = false;

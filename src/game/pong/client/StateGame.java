@@ -14,8 +14,8 @@ public class StateGame {
 	static boolean isPlayer1Paused = false;
 	static boolean isPlayer2Paused = false;
 	static boolean isTwoPlayerOfflineMode = true;
+	static boolean isSinglePlayer;
 	
-	static int isSinglePlayer;
 	static int difficulty = 6;
 	
 	static String whoPausedTheGame = "";
@@ -76,7 +76,7 @@ public class StateGame {
 		Input.onUpdate();
 		
 		/*AI MOVEMENT*/
-		if(!isTwoPlayerOfflineMode){
+		if(isSinglePlayer){
 			AI.onUpdate(difficulty);
 		}
 		

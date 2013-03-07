@@ -25,11 +25,11 @@ public class GuiButton {
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		this.state = state;
+		this.setState(state);
 		this.name = name;
-		this.normal = normal;
-		this.hoverOver = hoverOver;
-		this.color = color;
+		this.setNormalTexture(normal);
+		this.setHoverOverTexture(hoverOver);
+		this.setColor(color);
 	}
 	public String getName(){
 		return name;
@@ -42,6 +42,14 @@ public class GuiButton {
 	}
 	public String getState(){
 		return state;
+	}
+	public void setState(String state){
+		if(state == "load" || state == "menu" || state == "settings" || state == "game" || state == "win" || state == "lose"){
+			//TODO Must update if states are added
+			this.state = state;
+		}else{
+			System.out.println("Invalid state");
+		}
 	}
 	public void setNormalTexture(Texture tex){
 		this.normal = tex;

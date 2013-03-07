@@ -22,6 +22,8 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glViewport;
 public class MainClient {
 	
+	public static boolean endGame = false;
+	
 	public static void main(String []args)
 	{
 		new MainClient();
@@ -56,8 +58,6 @@ public class MainClient {
 		Textures.loadTextures();
 		
 		/*THE START OF THE GAME SCREEN*/
-		//Gui.addNewTextBox(new Gui.text("", 100, 200, 2, "this", "sweetLord", Color.blue));
-		//Gui.textArray[Gui.getTextByName("sweetLord")].setBackgroundVisibility(true);
 		while(!Display.isCloseRequested())
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -67,6 +67,7 @@ public class MainClient {
 			Display.sync(60);
 			Display.update();
 		}
+		endGame = true;
 		Display.destroy();
 		System.exit(0);
 	}

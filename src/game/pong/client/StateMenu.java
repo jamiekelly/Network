@@ -16,6 +16,7 @@ public class StateMenu {
 		GuiButton StartOfflineButton = Gui.buttonArray[Gui.getButtonByName("StartAI")];
 		if(StartButton.isPressed()){
 			StateManager.changeState("game");
+			StateGame.isSinglePlayer = true;
 		}
 		if(StartOfflineButton.isPressed()){
 			StateGame.isTwoPlayerOfflineMode = true;

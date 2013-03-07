@@ -18,7 +18,7 @@ public class AI {
 		 * Medium = 5
 		 * Hard = 6
 		 * */
-		if(!StateGame.isPlayer1Paused && StateGame.isSinglePlayer == 0)
+		if(!StateGame.isPlayer1Paused && StateGame.isSinglePlayer)
 		{
 			if(StateGame.p2Y > 0)
 			{
