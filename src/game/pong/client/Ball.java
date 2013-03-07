@@ -231,11 +231,16 @@ public class Ball implements Serializable{
 		ball.setProspectBallY(ball.getY());
 		while(ball.getProspectBallX() <= StateGame.player2.getX())
 		{
-			ball.setProspectBallX((float) (ball.getProspectBallX() - (ball.getdX() - .002)));
-			ball.setProspectBallY(ball.getProspectBallY() - ball.getdY());
-			if((ball.getProspectBallY() <= 0) || ((ball.getProspectBallY() + ball.getWAndH()) >= Display.getHeight()))
+			if(ball.getProspectBallX() >= StateGame.player1.getX())
 			{
-				ball.setdY(-ball.getdY());
+				ball.setProspectBallX((float) (ball.getProspectBallX() - (ball.getdX() - .002)));
+				ball.setProspectBallY(ball.getProspectBallY() - ball.getdY());
+				if((ball.getProspectBallY() <= 0) || ((ball.getProspectBallY() + ball.getWAndH()) >= Display.getHeight()))
+				{
+					ball.setdY(-ball.getdY());
+				}
+			}else{
+				break;
 			}
 		}
 		StateGame.player2.setMoveToY(ball.getProspectBallY());
