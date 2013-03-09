@@ -167,6 +167,7 @@ public class Ball implements Serializable{
 			//Calculating where the ball will go after being hit off
 			//the paddle, same as in brick breaker
 			ball.setdX(-ball.getdX());
+			ball.setX(StateGame.player1.getWidth());
 			ball.setdY((((StateGame.P1Y + (StateGame.player1.getHeight()/2)) - ball.getCenterOfBallY())/7.5));
 			if(StateGame.isSinglePlayer)//Finds were the AI paddle will need to move
 			{
@@ -179,6 +180,7 @@ public class Ball implements Serializable{
 			//Calculating where the ball will go after being hit off
 			//the paddle, same as in brick breaker
 			ball.setdX(-ball.getdX());
+			ball.setX(Display.getWidth()-StateGame.player2.getWidth()-ball.wAndH);
 			ball.setdY((((StateGame.p2Y+(StateGame.player2.getHeight()/2)) - ball.getCenterOfBallY()) /7.5));
 		}
 		if(ball.getCenterOfBallX() > Display.getWidth()) //Scored on RIGHT side of screen
