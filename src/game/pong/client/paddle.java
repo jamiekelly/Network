@@ -13,7 +13,7 @@ public class Paddle {
 	private int x, y;
 	private int height, width;
 	private int midHeight, midWidth;
-	private float moveToY;
+	private double moveToY;
 	
 	private Texture tex;
 	private Texture shadow = Textures.shadow;
@@ -67,11 +67,11 @@ public class Paddle {
 		this.midHeight = this.getHeight()/2;
 	}
 	
-	public float getMoveToY() {
+	public double getMoveToY() {
 		return moveToY;
 	}
-	public void setMoveToY(float f) {
-		this.moveToY = f;
+	public void setMoveToY(double d) {
+		this.moveToY = d;
 	}
 	
 	public void draw(){

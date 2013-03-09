@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2d;
-import static org.lwjgl.opengl.GL11.glVertex2i;
+import static org.lwjgl.opengl.GL11.glVertex2d;
 
 import java.io.Serializable;
 
@@ -13,18 +13,18 @@ import org.lwjgl.opengl.Display;
 
 @SuppressWarnings("serial")
 public class Ball implements Serializable{
-	private int x = 0;
-	private int y = 0;
+	private double x = 0;
+	private double y = 0;
 	
-	private float dX;
-	private float dY;
+	private double dX;
+	private double dY;
 	
-	private int centerOfBallX;
-	private int centerOfBallY;
+	private double centerOfBallX;
+	private double centerOfBallY;
 	private int wAndH;
 	
-	private float prospectBallX;
-	private float prospectBallY = 200;
+	private double prospectBallX;
+	private double prospectBallY = 200;
 	
 	public Ball(int x, int y, int dimensions){
 		this.setX(x);
@@ -32,64 +32,64 @@ public class Ball implements Serializable{
 		this.setWAndHt(dimensions);
 	}
 	
-	public int getX() {  //Getter for ball.X
+	public double getX() {  //Getter for ball.X
 		return x;
 	}
-	public void setX(int x) {//Setter for ball.Y
+	public void setX(double x) {//Setter for ball.Y
 		this.x = x;
 	}
 	
-	public int getY() {//Getter for ball.X
+	public double getY() {//Getter for ball.X
 		return y;
 	}
-	public void setY(int y) {//Setter for ball.Y
+	public void setY(double y) {//Setter for ball.Y
 		this.y = y;
 	}
 	
-	public float getdX() {//Getter for ball.dX
+	public double getdX() {//Getter for ball.dX
 		return dX;
 	}
-	public void setdX(float dX) {//Setter for ball.dX
+	public void setdX(double dX) {//Setter for ball.dX
 		this.dX = dX;
 	}
 	
-	public float getdY() {//Getter for ball.dY
+	public double getdY() {//Getter for ball.dY
 		return dY;
 	}
-	public void setdY(float dY) {//Setter for ball.dX
+	public void setdY(double dY) {//Setter for ball.dX
 		this.dY = dY;
 	}
 
 	
-	public int getCenterOfBallX() {
+	public double getCenterOfBallX() {
 		this.setCenterOfBallX(this.getX() + (this.getWAndH()/2));
 		return centerOfBallX;
 	}
-	public void setCenterOfBallX(int centerOfBallX) {
-		this.centerOfBallX = centerOfBallX;
+	public void setCenterOfBallX(double f) {
+		this.centerOfBallX = f;
 	}
 	
-	public int getCenterOfBallY() {
+	public double getCenterOfBallY() {
 		this.setCenterOfBallY(this.getY() + (this.getWAndH()/2));
 		return centerOfBallY;
 	}
-	public void setCenterOfBallY(int centerOfBallY) {
-		this.centerOfBallY = centerOfBallY;
+	public void setCenterOfBallY(double f) {
+		this.centerOfBallY = f;
 	}
 	
-	public float getProspectBallX() {
+	public double getProspectBallX() {
 		return prospectBallX;
 	}
 
-	public void setProspectBallX(float prospectBallX) {
+	public void setProspectBallX(double prospectBallX) {
 		this.prospectBallX = prospectBallX;
 	}
 
-	public float getProspectBallY() {
+	public double getProspectBallY() {
 		return prospectBallY;
 	}
 
-	public void setProspectBallY(float prospectBallY) {
+	public void setProspectBallY(double prospectBallY) {
 		this.prospectBallY = prospectBallY;
 	}
 	
@@ -116,13 +116,13 @@ public class Ball implements Serializable{
 		{
 			//This bit updates the movement of the ball. Without it the ball would
 			//just be static and wouldn't move at all :3
-			ball.setX((int) (ball.getX()-ball.getdX()));
-			ball.setY((int) (ball.getY()-ball.getdY()));
+			ball.setX((ball.getX()-ball.getdX()));
+			ball.setY((ball.getY()-ball.getdY()));
 			
 			if(ball.getdX() > 0){//Makes ball go faster slowly over time
-				ball.setdX((float) (ball.getdX() + .002));
+				ball.setdX((ball.getdX() + .002));
 			}else{
-				ball.setdX((float) (ball.getdX() - .002));
+				ball.setdX((ball.getdX() - .002));
 			}
 		}
 		
@@ -167,11 +167,11 @@ public class Ball implements Serializable{
 			//Calculating where the ball will go after being hit off
 			//the paddle, same as in brick breaker
 			ball.setdX(-ball.getdX());
-			ball.setdY((float) (((StateGame.P1Y + (StateGame.player1.getHeight()/2)) - ball.getCenterOfBallY())/7.5));
-			if(StateGame.isSinglePlayer && (StateGame.difficulty>3))//Finds were the AI paddle will need to move
+			ball.setdY((((StateGame.P1Y + (StateGame.player1.getHeight()/2)) - ball.getCenterOfBallY())/7.5));
+			if(StateGame.isSinglePlayer)//Finds were the AI paddle will need to move
 			{
 				ball.predictAI(ball);
-				ball.setdY((float) (((StateGame.P1Y + (StateGame.player1.getHeight()/2)) - ball.getCenterOfBallY())/7.5));//Resets dY
+				ball.setdY((((StateGame.P1Y + (StateGame.player1.getHeight()/2)) - ball.getCenterOfBallY())/7.5));//Resets dY
 			}
 		}
 		if(hitPlayersTwosPaddle)
@@ -179,42 +179,50 @@ public class Ball implements Serializable{
 			//Calculating where the ball will go after being hit off
 			//the paddle, same as in brick breaker
 			ball.setdX(-ball.getdX());
-			ball.setdY((float) (((StateGame.p2Y+(StateGame.player2.getHeight()/2)) - ball.getCenterOfBallY()) /7.5));
+			ball.setdY((((StateGame.p2Y+(StateGame.player2.getHeight()/2)) - ball.getCenterOfBallY()) /7.5));
 		}
 		if(ball.getCenterOfBallX() > Display.getWidth()) //Scored on RIGHT side of screen
 		{
 			StateGame.score0++;
 			
-			if(StateGame.score0 == 21){
+			if(StateGame.score0 == 21)
+			{
 				ball.setX(Display.getWidth() / 2);
-				ball.setY((int) (Display.getHeight() * 0.25));
-			}else{
+				ball.setY((Display.getHeight() * 0.25));
+			}
+			else
+			{
 				ball.setX(Display.getWidth() / 2);
 				ball.setY(Display.getHeight() / 2);
 			}
-			try {
+			try 
+			{
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {e.printStackTrace();}
 			ball.setdX(5);
-			ball.setdY((float) (Math.random()*8-4));
+			ball.setdY((Math.random()*8-4));
 		}
 		if(ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
 		{
 			
 			StateGame.score1++;
-			if(StateGame.score1 == 21){
+			if(StateGame.score1 == 21)
+			{
 				ball.setX(Display.getWidth() / 2);
-				ball.setY((int) (Display.getHeight() * 0.25));
-			}else{
+				ball.setY((Display.getHeight() * 0.25));
+			}
+			else
+			{
 				ball.setX(Display.getWidth() / 2);
 				ball.setY(Display.getHeight() / 2);
 			}
-			try {
+			try 
+			{
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {e.printStackTrace();}
 			ball.setdX(-5);
-			ball.setdY((float) (Math.random()*8-4));
-			if(StateGame.isSinglePlayer && (StateGame.difficulty>3))//Finds were the AI paddle will need to move
+			ball.setdY((Math.random()*8-4));
+			if(StateGame.isSinglePlayer)//Finds were the AI paddle will need to move
 			{
 				ball.predictAI(ball);
 			}
@@ -233,13 +241,15 @@ public class Ball implements Serializable{
 		{
 			if(ball.getProspectBallX() >= StateGame.player1.getX())
 			{
-				ball.setProspectBallX((float) (ball.getProspectBallX() - (ball.getdX() - .002)));
+				ball.setProspectBallX((ball.getProspectBallX() - (ball.getdX() - .002)));
 				ball.setProspectBallY(ball.getProspectBallY() - ball.getdY());
 				if((ball.getProspectBallY() <= 0) || ((ball.getProspectBallY() + ball.getWAndH()) >= Display.getHeight()))
 				{
 					ball.setdY(-ball.getdY());
 				}
-			}else{
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -250,13 +260,13 @@ public class Ball implements Serializable{
 		Textures.none.bind();
 		glBegin(GL_QUADS);//ball.getY() thingy
 			glTexCoord2d(0, 1);
-			glVertex2i(this.getX(), this.getY()); //1
+			glVertex2d(this.getX(), this.getY()); //1
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX() + this.getWAndH(), this.getY()); //2
+			glVertex2d(this.getX() + this.getWAndH(), this.getY()); //2
 			glTexCoord2d(1, 0);
-			glVertex2i(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
+			glVertex2d(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX(), this.getY() + this.getWAndH()); //4
+			glVertex2d(this.getX(), this.getY() + this.getWAndH()); //4
 		glEnd();
 	}
 	
@@ -265,30 +275,30 @@ public class Ball implements Serializable{
 		Textures.none.bind();
 		glBegin(GL_LINES);//1 to 2
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX(), this.getY()); //1
+			glVertex2d(this.getX(), this.getY()); //1
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX() + this.getWAndH(), this.getY()); //2
+			glVertex2d(this.getX() + this.getWAndH(), this.getY()); //2
 		glEnd();
 		
 		glBegin(GL_LINES);//2 to 3
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX() + this.getWAndH(), this.getY()); //2
+			glVertex2d(this.getX() + this.getWAndH(), this.getY()); //2
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
+			glVertex2d(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
 		glEnd();
 		
 		glBegin(GL_LINES);//3 to 4
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
+			glVertex2d(this.getX() + this.getWAndH(), this.getY() + this.getWAndH()); //3
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX() , this.getY() + this.getWAndH()); //4
+			glVertex2d(this.getX() , this.getY() + this.getWAndH()); //4
 		glEnd();
 		
 		glBegin(GL_LINES);//4 to 1
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX(), this.getY() + this.getWAndH()); //4
+			glVertex2d(this.getX(), this.getY() + this.getWAndH()); //4
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX(), this.getY()); //1
+			glVertex2d(this.getX(), this.getY()); //1
 		glEnd();
 	}
 }

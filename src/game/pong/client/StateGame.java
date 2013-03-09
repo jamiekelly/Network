@@ -16,7 +16,7 @@ public class StateGame {
 	static boolean isTwoPlayerOfflineMode = true;
 	static boolean isSinglePlayer;
 	
-	static int difficulty = 6;
+	static int difficulty = 2;
 	
 	static String whoPausedTheGame = "";
 	static int playerNum;
