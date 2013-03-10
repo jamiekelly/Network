@@ -13,23 +13,24 @@ public class Server {
 	public static ServerSocket server;
 	
 	static Socket socket;
+	static String ip = "192.168.0.7";
 	
-	
-	public static void startServer(String startIP){
+	public static void startServer(){
 		if(StateGame.isSinglePlayer || StateGame.isTwoPlayerOfflineMode)
 		{
 			new Thread(onUpdate).start();
 		}else{
 			try{
 				server = new ServerSocket(7777, 0, InetAddress.getLocalHost());
+				new Thread(accept).start();
 			}catch(Exception e){}
 		}
 	}
 	
 	public static void connectToServer(String toIP){
 		
-		int port = Integer.parseInt(toIP.substring(toIP.indexOf(":") + 1));
-		String ip = toIP.substring(0, toIP.indexOf(":"));
+		int port = 7777;
+		String ip = toIP;
 			
 		try {
 			socket = new Socket(ip, port);

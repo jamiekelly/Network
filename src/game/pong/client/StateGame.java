@@ -13,11 +13,13 @@ public class StateGame {
 	
 	static boolean isPlayer1Paused = false;
 	static boolean isPlayer2Paused = false;
-	static boolean isTwoPlayerOfflineMode = true;
-	static boolean isSinglePlayer;
+	static boolean isTwoPlayerOfflineMode = false;
+	static boolean isConnectingToServer = false;
+	static boolean isSinglePlayer = false;;
 	
 	static int difficulty = 2;
 	
+	static String toIP = "192.168.0.6";
 	static String whoPausedTheGame = "";
 	static int playerNum;
 	
@@ -54,7 +56,11 @@ public class StateGame {
 			ball.setdX(-5);
 		}
 		BallFollower.createFollowers();
-		Server.startServer("192.168.0.7:7777");
+		if(!isConnectingToServer){
+			Server.startServer();
+		}else{
+			Server.connectToServer(toIP);
+		}
 	}
 	
 	public static void onUpdate(){
@@ -72,7 +78,6 @@ public class StateGame {
 		player1.draw();
 		player2.draw();
 		
-		Gui.onUpdate();
 		Input.onUpdate();
 		
 		/*AI MOVEMENT*/

@@ -6,11 +6,12 @@ public class BallFollower {
 	
 	private static int numOfFollowers = 5;
 	static int delayCount = 0;
-	static int delayAmount = 10;
+	static int delayAmount = 5;
 	private static Ball[] ballFollow = new Ball[numOfFollowers];
 	
 	public static class follow extends Ball
 	{
+		private static final long serialVersionUID = 1L;
 		public follow(int x, int y, int dimensions) 
 		{
 			super(x, y, dimensions);

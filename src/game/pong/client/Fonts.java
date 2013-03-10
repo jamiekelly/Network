@@ -13,8 +13,6 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2d;
-import static org.lwjgl.opengl.GL11.glColor3f;
-
 public class Fonts {
 	
 	static ArrayList<Texture> letterTexList = new ArrayList<Texture>();
@@ -116,7 +114,7 @@ public class Fonts {
 			if(c != ' ' && c != '\n'){
 				//If statement to check if letters need to be moved one down (look
 				//bad if not done so I did :p
-				if(c == 'y' || c == 'g' || c == 'j'){
+				if(c == 'y' || c == 'g' || c == 'j' || c == 'p'){
 					drawCharacter(c, (double) x, (double)y + 1 * size, size);
 				}else{
 					drawCharacter(c, (double) x, (double)y, size);

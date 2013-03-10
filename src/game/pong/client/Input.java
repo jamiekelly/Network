@@ -1,13 +1,27 @@
 package game.pong.client;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 public class Input{
-	
+	static boolean lmbp = false;
+	static boolean rmbp = false;
 	//Just putting all the input stuff in an actual input class and then calling it from
 	//the main class. Tidy stuffs up
 	public static void onUpdate(){
+		lmbp = false;
+		rmbp = false;
+		while(Mouse.next()){
+			if(Mouse.getEventButtonState()){
+				if(Mouse.isButtonDown(0)){
+					lmbp = true;
+				}
+				if(Mouse.isButtonDown(1)){
+					rmbp = true;
+				}
+			}
+		}
 		while(Keyboard.next())
 		{
 			if(Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_P))
