@@ -8,18 +8,18 @@ If I put a '*' at the beginning of a line it means it's new so look at it and de
 
 -=PRIORITY #1 [DO IMMEDIATELY]=-
 										
-- Adjust "smart" AI so it's not dumb.
-- Fix the bug with the ball getting stuck when hit on the top or bottom of the paddle.
-- Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished
+X- Adjust "smart" AI so it's not dumb.
+X- Fix the bug with the ball getting stuck when hit on the top or bottom of the paddle.
+X- Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished
 
 X- Fix the bounce off the paddle
 X- Add Dynamic GUI. By this I mean GUI that is possible to be added anywhere with one, or two lines of code and no hassle
 
 -=Priority #2 [Do soon!]=-
 
-- Fix hit detection, for paddle and ceiling. (It's better but not perfect, still some problems)
-- Have the game pause for a second after every score.
-- Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
+X- Fix hit detection, for paddle and ceiling. (It's better but not perfect, still some problems)
+X- Have the game pause for a second after every score.
+X- Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
 - edit the difficulties since they're too hard with the fixed paddle bounce 
 		(Or even better, make the difficulties dependent on the dX and dY)
 		
@@ -92,25 +92,18 @@ X- Create multiple "States" e.g. When one player wins, when other loses etc. Pos
 
 --==NOTES!==-- [Delete my notes and replace with your's when you update]
 
-- Tim
+- Rob 05:36 AM 10/03/2017
 
-So, I did a bit today.
+So, I managed to get the server back working and it seems really well. No latency on a LAN server :p Which is
+really really good seeming from where we came from (2 seconds or so) Anyway. The server is working and 
+all the states too, the code has been updated and made sure to be as dynamic as possible so it's quite easy
+to add new methods in and it's possible to fix bugs easier.
 
-First off, an addition of a "Smart" AI... It still has problems though.  Just use it and you'll see...
-I'm sure I'll be able to get the bugs out of it when I work in it again, I finished it right as I was getting off.
-So I didn't really get a chance to attempt to fix any of the problems.   
+Added a GuiTextField class that is able to "collect" strings and then use it for some things, for example
+connecting to a specific ip or entering a name.
 
-I spent a lot of the time today trying to figure out the math and logic for the AI and the hit detection which as
-you may notice it LOOKS FUCKING INTIMIDATING at first glance!  Hahaha But it works a lot better than it did before which is great!
+I also added the thing for ballFollower you asked me to, you can just call the method while the game is running too
+all the if statements and for statements depend on that one variable the method changes so it's pretty easy to add
+more followers or less.
 
-I'm kind of proud of that boolean statement, it was complicated but I figured it out fairly quick!
-The AI formulas were a bitch too.
-
-Alright anything else?  Ummm.... Some getter/setter methods added for ball and paddle.
-Some other bug fixes and such.  I added some code to make the code more dynamic.
-For example instead of saying ("+ 30") to get half the paddle height.  It will now say ("+ paddle.getHeight()/2")
-
-I'm kind of concerned about how hard it will be to have a game with two balls.  I've been trying to figure out how to 
-do that and everyway I can think of would be somewhat hard.  We would pretty much have to make a copy the server.update method for
-any additional balls.  I'm sure there's an easier way but none that I can think of off the top of my head. 
-
+That's about it for now! :p

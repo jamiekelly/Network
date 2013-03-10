@@ -13,7 +13,7 @@ public class Server {
 	public static ServerSocket server;
 	
 	static Socket socket;
-	static String ip = "192.168.0.7";
+	static String ip = "192.168.0.6";
 	
 	public static void startServer(){
 		if(StateGame.isSinglePlayer || StateGame.isTwoPlayerOfflineMode)
