@@ -45,7 +45,6 @@ public class StateManager {
 		Gui.onUpdate();
 		if(State.equals("intro")){
 			if(!isIntroSetUp){
-				
 				isIntroSetUp =  true;
 			}
 			

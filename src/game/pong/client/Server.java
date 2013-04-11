@@ -13,7 +13,7 @@ public class Server {
 	public static ServerSocket server;
 	
 	static Socket socket;
-	static String ip = "192.168.0.6";
+	static String ip = "192.168.0.7";
 	
 	public static void startServer(){
 		if(StateGame.isSinglePlayer || StateGame.isTwoPlayerOfflineMode)
@@ -150,11 +150,12 @@ public class Server {
 	};
 	private static Runnable onUpdate = new Runnable()
 	{
-		public void run() 
+		public void run()
 		{
 			while(!MainClient.endGame == true)
 			{
 				StateGame.ball.onUpdate(StateGame.ball);
+				//StateGame.ball.onUpdate(StateGame.ball2);
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {e.printStackTrace();}

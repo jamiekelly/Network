@@ -7,7 +7,7 @@ public class AI {
 	private static double easy = 2;  //Edited for easier editing and in game editing
 	private static double medium = 3.5;
 	private static double hard = 5;
-	private static double impossible = 7; 
+	private static double impossible = 7; //NOT YET IMPLEMENTED
 	
 	public static void onUpdate(int difficulty){
 		

@@ -15,7 +15,7 @@ public class StateGame {
 	static boolean isPlayer2Paused = false;
 	static boolean isTwoPlayerOfflineMode = false;
 	static boolean isConnectingToServer = false;
-	static boolean isSinglePlayer = false;;
+	static boolean isSinglePlayer = false;
 	
 	static int difficulty = 2;
 	
@@ -35,6 +35,7 @@ public class StateGame {
 	static int p1Speed = 5;
 	static int p2Speed = 5;
 	static Ball ball = new Ball(0,0, 20);
+	//static Ball ball2 = new Ball(Display.getWidth()/2, Display.getHeight()/2, 20);
 	
 	
 	public static void onSetup(){
@@ -45,9 +46,9 @@ public class StateGame {
 		p2X = (Display.getWidth() -  StateGame.player2.getWidth());
 		ball.setX(Display.getWidth()/2);
 		ball.setY(Display.getHeight()/2);
-		ball.setdY((float) Math.random()*8-4);
+		ball.setdY(Math.random()*8-4);
 		//Ball either goes left or right at start
-		if(((float) Math.random()*2)<=1)
+		if((Math.random()*2)<=1)
 		{
 			ball.setdX(5);
 		}

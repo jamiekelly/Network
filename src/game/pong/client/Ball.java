@@ -26,80 +26,7 @@ public class Ball implements Serializable{
 	private double prospectBallX;
 	private double prospectBallY = 200;
 	
-	public Ball(int x, int y, int dimensions){
-		this.setX(x);
-		this.setY(y);
-		this.setWAndHt(dimensions);
-	}
-	
-	public double getX() {  //Getter for ball.X
-		return x;
-	}
-	public void setX(double x) {//Setter for ball.Y
-		this.x = x;
-	}
-	
-	public double getY() {//Getter for ball.X
-		return y;
-	}
-	public void setY(double y) {//Setter for ball.Y
-		this.y = y;
-	}
-	
-	public double getdX() {//Getter for ball.dX
-		return dX;
-	}
-	public void setdX(double dX) {//Setter for ball.dX
-		this.dX = dX;
-	}
-	
-	public double getdY() {//Getter for ball.dY
-		return dY;
-	}
-	public void setdY(double dY) {//Setter for ball.dX
-		this.dY = dY;
-	}
-
-	
-	public double getCenterOfBallX() {
-		this.setCenterOfBallX(this.getX() + (this.getWAndH()/2));
-		return centerOfBallX;
-	}
-	public void setCenterOfBallX(double f) {
-		this.centerOfBallX = f;
-	}
-	
-	public double getCenterOfBallY() {
-		this.setCenterOfBallY(this.getY() + (this.getWAndH()/2));
-		return centerOfBallY;
-	}
-	public void setCenterOfBallY(double f) {
-		this.centerOfBallY = f;
-	}
-	
-	public double getProspectBallX() {
-		return prospectBallX;
-	}
-
-	public void setProspectBallX(double prospectBallX) {
-		this.prospectBallX = prospectBallX;
-	}
-
-	public double getProspectBallY() {
-		return prospectBallY;
-	}
-
-	public void setProspectBallY(double prospectBallY) {
-		this.prospectBallY = prospectBallY;
-	}
-	
-	public int getWAndH() {
-		return wAndH;
-	}
-
-	public void setWAndHt(int wAndH) {
-		this.wAndH = wAndH;
-	}
+	private double speedInc = .005;
 	
 	public void onUpdate(Ball ball){
 		
@@ -120,9 +47,9 @@ public class Ball implements Serializable{
 			ball.setY((ball.getY()-ball.getdY()));
 			
 			if(ball.getdX() > 0){//Makes ball go faster slowly over time
-				ball.setdX((ball.getdX() + .002));
+				ball.setdX((ball.getdX() + ball.getSpeedInc()));
 			}else{
-				ball.setdX((ball.getdX() - .002));
+				ball.setdX((ball.getdX() - ball.getSpeedInc()));
 			}
 		}
 		
@@ -175,7 +102,7 @@ public class Ball implements Serializable{
 				ball.setdY((((StateGame.P1Y + (StateGame.player1.getHeight()/2)) - ball.getCenterOfBallY())/7.5));//Resets dY
 			}
 		}
-		if(hitPlayersTwosPaddle)
+		else if(hitPlayersTwosPaddle)
 		{
 			//Calculating where the ball will go after being hit off
 			//the paddle, same as in brick breaker
@@ -204,7 +131,7 @@ public class Ball implements Serializable{
 			ball.setdX(5);
 			ball.setdY((Math.random()*8-4));
 		}
-		if(ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
+		else if(ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
 		{
 			
 			StateGame.score1++;
@@ -243,7 +170,7 @@ public class Ball implements Serializable{
 		{
 			if(ball.getProspectBallX() >= StateGame.player1.getX())
 			{
-				ball.setProspectBallX((ball.getProspectBallX() - (ball.getdX() - .002)));
+				ball.setProspectBallX((ball.getProspectBallX() - (ball.getdX() - ball.getSpeedInc())));
 				ball.setProspectBallY(ball.getProspectBallY() - ball.getdY());
 				if((ball.getProspectBallY() <= 0) || ((ball.getProspectBallY() + ball.getWAndH()) >= Display.getHeight()))
 				{
@@ -256,6 +183,94 @@ public class Ball implements Serializable{
 			}
 		}
 		StateGame.player2.setMoveToY(ball.getProspectBallY());
+	}
+
+	public Ball(int x, int y, int dimensions){
+		this.setX(x);
+		this.setY(y);
+		this.setWAndHt(dimensions);
+	}
+
+	public double getX() {  //Getter for ball.X
+		return x;
+	}
+
+	public void setX(double x) {//Setter for ball.Y
+		this.x = x;
+	}
+
+	public double getY() {//Getter for ball.X
+		return y;
+	}
+
+	public void setY(double y) {//Setter for ball.Y
+		this.y = y;
+	}
+
+	public double getdX() {//Getter for ball.dX
+		return dX;
+	}
+
+	public void setdX(double dX) {//Setter for ball.dX
+		this.dX = dX;
+	}
+
+	public double getdY() {//Getter for ball.dY
+		return dY;
+	}
+
+	public void setdY(double dY) {//Setter for ball.dX
+		this.dY = dY;
+	}
+
+	public double getCenterOfBallX() {
+		this.setCenterOfBallX(this.getX() + (this.getWAndH()/2));
+		return centerOfBallX;
+	}
+
+	public void setCenterOfBallX(double f) {
+		this.centerOfBallX = f;
+	}
+
+	public double getCenterOfBallY() {
+		this.setCenterOfBallY(this.getY() + (this.getWAndH()/2));
+		return centerOfBallY;
+	}
+
+	public void setCenterOfBallY(double f) {
+		this.centerOfBallY = f;
+	}
+
+	public double getProspectBallX() {
+		return prospectBallX;
+	}
+
+	public void setProspectBallX(double prospectBallX) {
+		this.prospectBallX = prospectBallX;
+	}
+
+	public double getProspectBallY() {
+		return prospectBallY;
+	}
+
+	public void setProspectBallY(double prospectBallY) {
+		this.prospectBallY = prospectBallY;
+	}
+
+	public int getWAndH() {
+		return wAndH;
+	}
+
+	public void setWAndHt(int wAndH) {
+		this.wAndH = wAndH;
+	}
+
+	public double getSpeedInc() {
+		return speedInc;
+	}
+
+	public void setSpeedInc(double speedInc) {
+		this.speedInc = speedInc;
 	}
 
 	public void draw(){
