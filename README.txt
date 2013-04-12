@@ -94,7 +94,6 @@ X- Create multiple "States" e.g. When one player wins, when other loses etc. Pos
 
 - Tim
 
-Mar, 11, 2013
+Mar, 12, 2013
 
-Some small changes I made a while ago and wanted to finally upload them. 
-
+Added difficulty options.

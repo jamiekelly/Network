@@ -17,7 +17,7 @@ public class StateGame {
 	static boolean isConnectingToServer = false;
 	static boolean isSinglePlayer = false;
 	
-	static int difficulty = 2;
+	static int difficulty;
 	
 	static String toIP = "192.168.0.6";
 	static String whoPausedTheGame = "";

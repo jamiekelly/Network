@@ -50,7 +50,6 @@ public class StateManager {
 			
 		}else if(State.equals("load")){
 			if(!isLoadSetUp){
-				
 				isLoadSetUp = true;
 			}
 			
@@ -62,7 +61,6 @@ public class StateManager {
 			StateMenu.onUpdate();
 		}else if(State.equals("settings")){
 			if(!isSettingsSetUp){
-				
 				isSettingsSetUp = true;
 			}
 			
@@ -74,13 +72,11 @@ public class StateManager {
 			StateGame.onUpdate();
 		}else if(State.equals("win")){
 			if(!isWinSetUp){
-				
 				isWinSetUp = true;
 			}
 			
 		}else if(State.endsWith("lose")){
-			if(!isLoseSetUp){
-				
+			if(!isLoseSetUp){				
 				isLoseSetUp = true;
 			}
 			
