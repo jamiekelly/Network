@@ -8,30 +8,16 @@ If I put a '*' at the beginning of a line it means it's new so look at it and de
 
 -=PRIORITY #1 [DO IMMEDIATELY]=-
 										
-- Adjust "smart" AI so it's not dumb.
-- Fix the bug with the ball getting stuck when hit on the top or bottom of the paddle.
-- Add 2 player support within an offline game (non server) NOTE* Do once GUI is finished
-
-X- Fix the bounce off the paddle
-X- Add Dynamic GUI. By this I mean GUI that is possible to be added anywhere with one, or two lines of code and no hassle
 
 -=Priority #2 [Do soon!]=-
 
-- Fix hit detection, for paddle and ceiling. (It's better but not perfect, still some problems)
-- Have the game pause for a second after every score.
 - Make the 'numOfFollowers' in the 'ballfollowers' class defined by parameter, or other way.  [Explained further in notes]
 - edit the difficulties since they're too hard with the fixed paddle bounce 
 		(Or even better, make the difficulties dependent on the dX and dY)
-		
-X- Better edge detection for the paddle.  It looks like the edge of the paddle will hit the ball and then it doesn't
-X- Do something about the ball hitting the top or bottom of the paddle and not bouncing back (Fixed but new problem arose)		
-X- Draw font so it's possible to write things on screen (most likely draw with a stylesheet and then load from that		
-X- Fix so that the ball does shoot off to the left and score a point for player 2 immediately on start.
 
 -=Priority #3 [Do whenever]=-
-
-X- Create graphics for the game (paddles, ball etc)
-X- Create multiple "States" e.g. When one player wins, when other loses etc. Possibly create different game modes? 
+ 
+- Possibly create different game modes? 
 
 
 
@@ -96,4 +82,5 @@ X- Create multiple "States" e.g. When one player wins, when other loses etc. Pos
 
 Mar, 12, 2013
 
-Added difficulty options.
+Fixed all known bugs with the AI.  Added the difficulties to the GUI.
+

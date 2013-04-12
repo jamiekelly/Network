@@ -129,7 +129,7 @@ public class Ball implements Serializable{
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {e.printStackTrace();}
 			ball.setdX(5);
-			ball.setdY((Math.random()*8-4));
+			ball.setdY((Math.random()*7-3.5));
 		}
 		else if(ball.getCenterOfBallX() < 0) //Scored on LEFT side of screen
 		{
@@ -144,13 +144,14 @@ public class Ball implements Serializable{
 			{
 				ball.setX(Display.getWidth() / 2);
 				ball.setY(Display.getHeight() / 2);
+				StateGame.player2.setMoveToY(200);
 			}
 			try 
 			{
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {e.printStackTrace();}
 			ball.setdX(-5);
-			ball.setdY((Math.random()*8-4));
+			ball.setdY((Math.random()*7-3.5));
 			if(StateGame.isSinglePlayer)//Finds were the AI paddle will need to move
 			{
 				ball.predictAI(ball);
@@ -161,8 +162,7 @@ public class Ball implements Serializable{
 			ball.setdY(-ball.getdY());
 		}
 	}
-	
-	private void predictAI(Ball ball)
+	void predictAI(Ball ball)
 	{
 		ball.setProspectBallX(ball.getX());
 		ball.setProspectBallY(ball.getY());

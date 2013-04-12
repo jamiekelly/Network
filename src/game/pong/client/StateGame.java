@@ -46,7 +46,7 @@ public class StateGame {
 		p2X = (Display.getWidth() -  StateGame.player2.getWidth());
 		ball.setX(Display.getWidth()/2);
 		ball.setY(Display.getHeight()/2);
-		ball.setdY(Math.random()*8-4);
+		ball.setdY(Math.random()*7-3.5);
 		//Ball either goes left or right at start
 		if((Math.random()*2)<=1)
 		{

@@ -152,6 +152,7 @@ public class Server {
 	{
 		public void run()
 		{
+			StateGame.ball.predictAI(StateGame.ball);
 			while(!MainClient.endGame == true)
 			{
 				StateGame.ball.onUpdate(StateGame.ball);
