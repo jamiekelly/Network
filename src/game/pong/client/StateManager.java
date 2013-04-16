@@ -41,7 +41,7 @@ public class StateManager {
 	
 	static float opacity = 0F;
 	
-	public static void onUpdate(){
+	public static void onUpdate(int delta){
 		Gui.onUpdate();
 		if(State.equals("intro")){
 			if(!isIntroSetUp){
@@ -69,7 +69,7 @@ public class StateManager {
 				StateGame.onSetup();
 				isGameSetUp = true;
 			}
-			StateGame.onUpdate();
+			StateGame.onUpdate(delta);
 		}else if(State.equals("win")){
 			if(!isWinSetUp){
 				isWinSetUp = true;

@@ -51,20 +51,41 @@ public class Input{
 		{
 			if(Keyboard.isKeyDown(Keyboard.KEY_UP)) //Player paddles
 			{
-				if(StateGame.P1Y > 0)
+				if(StateGame.playerNum == 0)
 				{
-					if(StateGame.playerNum == 0){
-						StateGame.P1Y -= StateGame.p2Speed;
+					if(StateGame.P1Y > 0){
+						StateGame.P1Y -= StateGame.p1Speed;
+					}
+				}
+				else if(StateGame.playerNum == 1)
+				{
+					if(StateGame.p2Y > 0)
+					{
+						StateGame.p2Y -= StateGame.p2Speed;
 					}
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
 			{
-				if(StateGame.P1Y + StateGame.player1.getHeight() < Display.getHeight())
+				if(StateGame.playerNum == 0)
 				{
-					if(StateGame.playerNum == 0){
-						StateGame.P1Y += StateGame.p2Speed;
+					if(StateGame.P1Y + StateGame.player1.getHeight() < Display.getHeight())
+					{
+						StateGame.P1Y += StateGame.p1Speed;
 					}
+				}
+				else if(StateGame.playerNum == 1)
+				{
+					if(StateGame.p2Y + StateGame.player2.getHeight() < Display.getHeight())
+					{
+						StateGame.p2Y += StateGame.p2Speed;
+					}
+				}
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_B))
+			{
+				if(StateGame.playerNum == 0){
+					StateGame.player2.setHeight(StateGame.player2.getHeight() + 1);
 				}
 			}
 			if(StateGame.isTwoPlayerOfflineMode)
@@ -73,14 +94,14 @@ public class Input{
 				{
 					if(StateGame.p2Y > 0)
 					{
-						StateGame.p2Y -= StateGame.p2Speed;
+						StateGame.p2Y -= StateGame.p1Speed;
 					}
 				}
 				if(Keyboard.isKeyDown(Keyboard.KEY_S))
 				{
 					if(StateGame.p2Y + StateGame.player2.getHeight() < Display.getHeight())
 					{
-						StateGame.p2Y += StateGame.p2Speed;
+						StateGame.p2Y += StateGame.p1Speed;
 					}
 				}
 			}

@@ -103,6 +103,9 @@ public class Server {
 						ois = new ObjectInputStream(socket.getInputStream());
 						StateGame.isPaused = (Boolean) ois.readObject();
 						
+						ois = new ObjectInputStream(socket.getInputStream());
+						StateGame.player2.setHeight((Integer) ois.readObject());
+						
 					}
 				Thread.sleep(10);
 				}catch(Exception e){
@@ -135,6 +138,9 @@ public class Server {
 						
 						oos = new ObjectOutputStream(socket.getOutputStream());
 						oos.writeObject(StateGame.isPaused);
+						
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(StateGame.player2.getHeight());
 					}
 					else if(StateGame.playerNum == 1){							
 						oos.writeObject(StateGame.p2Y);

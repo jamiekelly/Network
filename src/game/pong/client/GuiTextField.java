@@ -64,17 +64,16 @@ public class GuiTextField {
 		int mX = Mouse.getX();
 		int mY = Display.getHeight() - Mouse.getY();
 		
-		while(Mouse.next()){
-			if(Mouse.getEventButtonState()){
-				if(Mouse.isButtonDown(0)){
-					if(mX >= x && mX <= x + w && mY >= y && mY <= y + h){
-						isSelected = true;
-					}else{
-						isSelected = false;
-					}
-				}
+		//Had to change this because the While(Mouse.next()) method is already being used by buttons, so it gets kind of buggy :/
+		if(Mouse.isButtonDown(0)){
+			isSelected = false;
+			if(mX >= x && mX <= x + w && mY >= y && mY <= y + h){
+				isSelected = true;
+			}else{
+				isSelected = false;
 			}
 		}
+		
 		if(isSelected && text.length() < maxCharacters){
 			while(Keyboard.next()){
 				if(Keyboard.getEventKeyState()){

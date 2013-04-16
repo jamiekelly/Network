@@ -1,6 +1,7 @@
 package game.pong.client;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -23,6 +24,19 @@ import static org.lwjgl.opengl.GL11.glViewport;
 public class MainClient {
 	
 	public static boolean endGame = false;
+	
+	
+	private static long lastFrame;
+    private static long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
+
+    private static int getDelta() {
+        long currentTime = getTime();
+        int delta = (int) (currentTime - lastFrame);
+        lastFrame = getTime();
+        return delta;
+    }
 	
 	public static void main(String []args)
 	{
@@ -62,7 +76,7 @@ public class MainClient {
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 			
-			StateManager.onUpdate();
+			StateManager.onUpdate(getDelta());
 			
 			Display.sync(60);
 			Display.update();

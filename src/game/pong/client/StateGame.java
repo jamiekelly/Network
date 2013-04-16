@@ -19,7 +19,7 @@ public class StateGame {
 	
 	static int difficulty;
 	
-	static String toIP = "192.168.0.6";
+	static String toIP = "192.168.0.4";
 	static String whoPausedTheGame = "";
 	static int playerNum;
 	
@@ -34,7 +34,11 @@ public class StateGame {
 	//Making these dynamic so we can add bonuses and boosts easier :p
 	static int p1Speed = 5;
 	static int p2Speed = 5;
+	
+	static double p1SpeedAdd = 0;
+	static double p2SpeedAdd = 0;
 	static Ball ball = new Ball(0,0, 20);
+	
 	//static Ball ball2 = new Ball(Display.getWidth()/2, Display.getHeight()/2, 20);
 	
 	
@@ -64,7 +68,10 @@ public class StateGame {
 		}
 	}
 	
-	public static void onUpdate(){
+	public static void onUpdate(int delta){
+		p1Speed = (int) (delta * (0.5 + p1SpeedAdd));
+		p2Speed = (int) (delta * (0.5 + p2SpeedAdd));
+		
 		ball.setX(ball.getX());
 		ball.setY(ball.getY());
 		
@@ -73,7 +80,6 @@ public class StateGame {
 		player2.setX(p2X);
 		player2.setY(p2Y);
 		BallFollower.onUpdate();
-		
 		
 		//PaddleShadow.onUpdate();
 		player1.draw();
