@@ -27,13 +27,16 @@ public class StateGame {
 	static int score1 = 0;
 	
 	static int P1X = 0;
-	static int P1Y;
+	static double P1Y;
 	static int p2X;
-	static int p2Y;
+	static double p2Y;
+	
+	static double p1dY = 0;
+	static double p2dY = 0;
 	
 	//Making these dynamic so we can add bonuses and boosts easier :p
-	static int p1Speed = 5;
-	static int p2Speed = 5;
+	static double p1Speed = 5;
+	static double p2Speed = 5;
 	
 	static double p1SpeedAdd = 0;
 	static double p2SpeedAdd = 0;
@@ -69,8 +72,12 @@ public class StateGame {
 	}
 	
 	public static void onUpdate(int delta){
-		p1Speed = (int) (delta * (0.5 + p1SpeedAdd));
-		p2Speed = (int) (delta * (0.5 + p2SpeedAdd));
+		p1Speed = (delta * p1dY) * 0.05;
+		p2Speed = (delta * p2dY) * 0.05;
+		
+		P1Y += p1Speed;
+		p2Y += p2Speed;
+		
 		
 		ball.setX(ball.getX());
 		ball.setY(ball.getY());
@@ -120,6 +127,7 @@ public class StateGame {
 			Fonts.drawString(playerWon[1], Display.getWidth()/2-120, (Display.getHeight() / 2)-30,  5, Color.white);
 		}
 		ball.draw();
+		PowerUpList.draw();
 		
 		//Here we draw the text on who paused the screen! :p
 		if(isPaused)

@@ -1,5 +1,7 @@
 package game.pong.client;
 
+import game.pong.client.PowerUpList.Powerup;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,6 +9,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class Server {
 	
@@ -78,7 +84,7 @@ public class Server {
 					if(StateGame.playerNum == 0)
 					{
 						ois = new ObjectInputStream(socket.getInputStream());
-						StateGame.p2Y = (Integer) ois.readObject();
+						StateGame.p2Y = (Double) ois.readObject();
 						
 						ois = new ObjectInputStream(socket.getInputStream());
 						StateGame.isPlayer2Paused = (Boolean) ois.readObject();
@@ -86,7 +92,7 @@ public class Server {
 					else if(StateGame.playerNum == 1)
 					{	
 						ois = new ObjectInputStream(socket.getInputStream());
-						StateGame.P1Y = (Integer) ois.readObject();
+						StateGame.P1Y = (Double) ois.readObject();
 						
 						ois = new ObjectInputStream(socket.getInputStream());
 						Ball b = (Ball) ois.readObject();
@@ -106,6 +112,11 @@ public class Server {
 						ois = new ObjectInputStream(socket.getInputStream());
 						StateGame.player2.setHeight((Integer) ois.readObject());
 						
+						ois = new ObjectInputStream(socket.getInputStream());
+						StateGame.player1.setHeight((Integer) ois.readObject());
+						
+						ois = new ObjectInputStream(socket.getInputStream());
+						PowerUpList.PowerUpArray = (ArrayList<Powerup>) ois.readObject();
 					}
 				Thread.sleep(10);
 				}catch(Exception e){
@@ -141,6 +152,12 @@ public class Server {
 						
 						oos = new ObjectOutputStream(socket.getOutputStream());
 						oos.writeObject(StateGame.player2.getHeight());
+						
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(StateGame.player1.getHeight());
+						
+						oos = new ObjectOutputStream(socket.getOutputStream());
+						oos.writeObject(PowerUpList.PowerUpArray);
 					}
 					else if(StateGame.playerNum == 1){							
 						oos.writeObject(StateGame.p2Y);
@@ -162,6 +179,7 @@ public class Server {
 			while(!MainClient.endGame == true)
 			{
 				StateGame.ball.onUpdate(StateGame.ball);
+				PowerUpList.onUpdate();
 				//StateGame.ball.onUpdate(StateGame.ball2);
 				try {
 					Thread.sleep(20);

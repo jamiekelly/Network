@@ -4,13 +4,14 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2d;
-import static org.lwjgl.opengl.GL11.glVertex2i;
+import static org.lwjgl.opengl.GL11.glVertex2d;
 import static org.lwjgl.opengl.GL11.glColor3f;
 
 import org.newdawn.slick.opengl.Texture;
 
 public class Paddle {
-	private int x, y;
+	private int x;
+	private double y;
 	private int height, width;
 	private int midHeight, midWidth;
 	private double moveToY;
@@ -18,7 +19,7 @@ public class Paddle {
 	private Texture tex;
 	private Texture shadow = Textures.shadow;
 	
-	public Paddle(int x, int y, int width, int height, Texture tex){
+	public Paddle(int x, double y, int width, int height, Texture tex){
 		this.setX(x);
 		this.setY(y);
 		this.setWidth(width);
@@ -28,14 +29,14 @@ public class Paddle {
 	public int getX(){
 		return x;
 	}
-	public int getY(){
+	public double getY(){
 		return y;
 	}
 	public void setX(int x){
 		this.x = x;
 	}
 	
-	public void setY(int y){
+	public void setY(double y){
 		this.y = y;
 	}
 	
@@ -80,13 +81,13 @@ public class Paddle {
 		}
 		glBegin(GL_QUADS);
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX() , this.getY());	//1
+			glVertex2d(this.getX() , this.getY());	//1
 			glTexCoord2d(1, 0);
-			glVertex2i(this.getX() + this.getWidth() , this.getY());	//2
+			glVertex2d(this.getX() + this.getWidth() , this.getY());	//2
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX() + this.getWidth(), this.getY() + this.getHeight());	//3
+			glVertex2d(this.getX() + this.getWidth(), this.getY() + this.getHeight());	//3
 			glTexCoord2d(0, 1);
-			glVertex2i(this.getX() , this.getY() + this.getHeight());	//4
+			glVertex2d(this.getX() , this.getY() + this.getHeight());	//4
 		glEnd();
 	}
 	public void drawShadow(){
@@ -98,13 +99,13 @@ public class Paddle {
 		shadow.bind();
 		glBegin(GL_QUADS);
 			glTexCoord2d(0, 0);
-			glVertex2i(this.getX() , this.getY());	//1
+			glVertex2d(this.getX() , this.getY());	//1
 			glTexCoord2d(1, 0);
-			glVertex2i(this.getX() + this.getWidth() , this.getY());	//2
+			glVertex2d(this.getX() + this.getWidth() , this.getY());	//2
 			glTexCoord2d(1, 1);
-			glVertex2i(this.getX() + this.getWidth(), this.getY() + this.getHeight());	//3
+			glVertex2d(this.getX() + this.getWidth(), this.getY() + this.getHeight());	//3
 			glTexCoord2d(0, 1);
-			glVertex2i(this.getX() , this.getY() + this.getHeight());	//4
+			glVertex2d(this.getX() , this.getY() + this.getHeight());	//4
 		glEnd();
 		
 		glColor3f(1,1,1);
