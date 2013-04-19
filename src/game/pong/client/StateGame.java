@@ -88,7 +88,6 @@ public class StateGame {
 		player2.setY(p2Y);
 		BallFollower.onUpdate();
 		
-		//PaddleShadow.onUpdate();
 		player1.draw();
 		player2.draw();
 		

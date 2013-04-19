@@ -9,6 +9,7 @@ public class Input{
 	static boolean rmbp = false;
 	static boolean upWasLastp0 = true;
 	static boolean upWasLastp1 = true;
+	static double paddleStopSpeed = 0.65;  //Higher = slower stop // lower = faster stop
 	//Just putting all the input stuff in an actual input class and then calling it from
 	//the main class. Tidy stuffs up
 	public static void onUpdate(){
@@ -58,7 +59,7 @@ public class Input{
 			{
 				if(StateGame.playerNum == 0)
 				{
-					if(StateGame.P1Y > 0){
+					if(StateGame.p1dY > 0){
 						StateGame.p1dY = -5;
 						upWasLastp0 = true;
 					}
@@ -75,16 +76,16 @@ public class Input{
 				//Makes the paddle slow down gradually, it adds a smooth effect to movement
 				//Well, smooth for me anyway :D
 				if(StateGame.playerNum == 0 && upWasLastp0){
-					StateGame.p1dY *= 0.9;
+					StateGame.p1dY *= paddleStopSpeed;
 				}else if(StateGame.playerNum == 1 && upWasLastp1){
-					StateGame.p2dY *= 0.9;
+					StateGame.p2dY *= paddleStopSpeed;
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
 			{
 				if(StateGame.playerNum == 0)
 				{
-					if(StateGame.P1Y + StateGame.player1.getHeight() < Display.getHeight())
+					if(StateGame.p1dY + StateGame.player1.getHeight() < Display.getHeight())
 					{
 						StateGame.p1dY = 5;
 						upWasLastp0 = false;
@@ -92,7 +93,7 @@ public class Input{
 				}
 				else if(StateGame.playerNum == 1)
 				{
-					if(StateGame.p2Y + StateGame.player2.getHeight() < Display.getHeight())
+					if(StateGame.p2dY + StateGame.player2.getHeight() < Display.getHeight())
 					{
 						StateGame.p2dY = 5;
 						upWasLastp1 = false;
@@ -100,9 +101,9 @@ public class Input{
 				}
 			}else{
 				if(StateGame.playerNum == 0 && !upWasLastp0){
-					StateGame.p1dY *= 0.9;
+					StateGame.p1dY *= paddleStopSpeed;
 				}else if(StateGame.playerNum == 1 && !upWasLastp1){
-					StateGame.p2dY *= 0.9;
+					StateGame.p2dY *= paddleStopSpeed;
 				}
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_B))
@@ -115,26 +116,26 @@ public class Input{
 			{
 				if(Keyboard.isKeyDown(Keyboard.KEY_W))
 				{
-					if(StateGame.p2Y > 0)
+					if(StateGame.p2dY > 0)
 					{
 						StateGame.p2dY = -5;
 						upWasLastp1 = false;
 					}
 				}else{
 					if(upWasLastp1){
-						StateGame.p2dY *= 0.9;
+						StateGame.p2dY *= paddleStopSpeed;
 					}
 				}
 				if(Keyboard.isKeyDown(Keyboard.KEY_S))
 				{
-					if(StateGame.p2Y + StateGame.player2.getHeight() < Display.getHeight())
+					if(StateGame.p2dY + StateGame.player2.getHeight() < Display.getHeight())
 					{
 						StateGame.p2dY = 5;
 						upWasLastp1 = false;
 					}
 				}else{
 					if(!upWasLastp1){
-						StateGame.p2dY *= 0.9;
+						StateGame.p2dY *= paddleStopSpeed;
 					}
 				}
 			}
