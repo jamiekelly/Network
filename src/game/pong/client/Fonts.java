@@ -14,30 +14,32 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2d;
 public class Fonts {
-	
+
 	static ArrayList<Texture> letterTexList = new ArrayList<Texture>();
 	static ArrayList<Texture> symbolTexList = new ArrayList<Texture>();
-	
 	static char alphabet[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
 								'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
 								'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
 								'k', 'l', 'm', 'n', 'o', 'p', 'q','r', 's', 't', 'u', 'v',
 								'w', 'x', 'y', 'z'};
 	static char symbols[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	
+	//Goes through the loop and sets up all the textures(All fonts are saved similarly
+	//and according to what letter is of what number
+	static boolean texSetUp = false;
+
 	public static void drawCharacter(char c, double x, double y, double size){
 		for(int i = 0; i < alphabet.length; i++){
 			if(c == alphabet[i]){
 				float width = letterTexList.get(i).getImageWidth();
 				float height = letterTexList.get(i).getImageHeight();
-				
+
 				//the physical width of the texture which will be used in glTexCoord (generally a float between 0 and 1)
 				float textureWidth = letterTexList.get(i).getWidth();
-				float textureHeight = letterTexList.get(i).getHeight();
+			    float textureHeight = letterTexList.get(i).getHeight();
 				//texture offsets, for texture atlas purposes. leave at 0 for full image
 				float textureOffsetX = 0;
 				float textureOffsetY = 0;
-				
+
 				letterTexList.get(i).bind();
 				glBegin(GL_QUADS);
 					glTexCoord2f(textureOffsetX, textureOffsetY + textureHeight);
@@ -55,17 +57,17 @@ public class Fonts {
 		//array to see if the character equals the one set in array list
 		for(int i = 0; i < symbols.length; i++){
 			if(c == symbols[i]){
-				
+
 				float width = symbolTexList.get(i).getImageWidth();
 				float height = symbolTexList.get(i).getImageHeight();
-				
+
 				//the physical width of the texture which will be used in glTexCoord (generally a float between 0 and 1)
 				float textureWidth = symbolTexList.get(i).getWidth();
 				float textureHeight = symbolTexList.get(i).getHeight();
 				//texture offsets, for texture atlas purposes. leave at 0 for full image
 				float textureOffsetX = 0;
 				float textureOffsetY = 0;
-				
+
 				symbolTexList.get(i).bind();
 				glBegin(GL_QUADS);
 					glTexCoord2f(textureOffsetX, textureOffsetY + textureHeight);
@@ -80,9 +82,7 @@ public class Fonts {
 			}
 		}
 	}
-	//Goes through the loop and sets up all the textures(All fonts are saved similarly
-	//and according to what letter is of what number
-	static boolean texSetUp = false;
+
 	public static void setUpTextures(){
 		if(!texSetUp){
 			for(int i = 0; i < alphabet.length; i++){
@@ -102,6 +102,7 @@ public class Fonts {
 			texSetUp = true;
 		}
 	}
+
 	/*
 	 * Statement that is called that loops through every letter in the string
 	 * and is the actual thing that will calculate all the spaces needed and 
@@ -137,6 +138,7 @@ public class Fonts {
 		}
 		Color.white.bind();
 	}
+
 	public static int getWidth(String text, double size){
 		int x = 0;
 		int largestX = 0;
@@ -168,6 +170,7 @@ public class Fonts {
 		
 		return largestX;
 	}
+
 	public static int getHeight(String text, double size){
 		int y = (int) (7 * size);
 		for(char c : text.toCharArray()){

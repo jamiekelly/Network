@@ -11,8 +11,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import org.lwjgl.opengl.Display;
 
 public class Server {
 	
@@ -20,6 +23,8 @@ public class Server {
 	
 	static Socket socket;
 	static String ip = "192.168.0.7";
+	
+	static float chanceOfNewPowerUp = 0.01F;// Out of 100 (supposed to be %)
 	
 	public static void startServer(){
 		if(StateGame.isSinglePlayer || StateGame.isTwoPlayerOfflineMode)
@@ -180,6 +185,13 @@ public class Server {
 			{
 				StateGame.ball.onUpdate(StateGame.ball);
 				PowerUpList.onUpdate();
+				
+				Random random = new Random();
+				float ran = random.nextFloat();
+				if(ran <= chanceOfNewPowerUp){
+					PowerUpList.addNewRandomPowerUp();
+				}
+				
 				//StateGame.ball.onUpdate(StateGame.ball2);
 				try {
 					Thread.sleep(20);

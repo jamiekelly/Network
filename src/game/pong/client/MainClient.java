@@ -75,9 +75,7 @@ public class MainClient {
 		while(!Display.isCloseRequested())
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
-			
 			StateManager.onUpdate(getDelta());
-			
 			Display.sync(60);
 			Display.update();
 		}

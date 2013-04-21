@@ -16,7 +16,7 @@ public class AI {
 		 * Medium = 1
 		 * Hard = 2
 		 * */
-		if(!StateGame.isPlayer1Paused && StateGame.isSinglePlayer)
+		if(!StateGame.isPlayer1Paused && StateGame.isSinglePlayer && !Input.isP2Stunned)
 		{
 			if(StateGame.p2Y > 0)//Stops paddle at boundary edge
 			{

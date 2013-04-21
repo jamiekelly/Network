@@ -38,8 +38,8 @@ public class StateGame {
 	static double p1Speed = 5;
 	static double p2Speed = 5;
 	
-	static double p1SpeedAdd = 0;
-	static double p2SpeedAdd = 0;
+	static double p1SpeedMultiplier = 1;
+	static double p2SpeedMultiplier = 1;
 	static Ball ball = new Ball(0,0, 20);
 	
 	//static Ball ball2 = new Ball(Display.getWidth()/2, Display.getHeight()/2, 20);
@@ -72,12 +72,12 @@ public class StateGame {
 	}
 	
 	public static void onUpdate(int delta){
-		p1Speed = (delta * p1dY) * 0.05;
-		p2Speed = (delta * p2dY) * 0.05;
+		p1Speed = (delta * (p1dY * p1SpeedMultiplier)) * 0.05;
+		p2Speed = (delta * (p2dY * p2SpeedMultiplier)) * 0.05;
 		
 		P1Y += p1Speed;
 		p2Y += p2Speed;
-		
+		System.out.println(p1Speed);
 		
 		ball.setX(ball.getX());
 		ball.setY(ball.getY());
